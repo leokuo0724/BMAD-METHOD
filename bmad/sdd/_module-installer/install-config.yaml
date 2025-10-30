@@ -1,0 +1,73 @@
+# Spec-Driven Development Module Configuration
+# This file defines installation questions and module configuration values
+
+code: sdd
+name: "Spec-Driven Development"
+default_selected: false
+
+# Welcome message shown during installation
+prompt:
+  - "Thank you for choosing Spec-Driven Development (SDD)!"
+  - "This module enables AI-assisted product development workflows that reduce human labor costs"
+  - "through structured processes for transforming requirements into deliverable code."
+
+# Core config values are automatically inherited:
+## user_name
+## communication_language
+## document_output_language
+## output_folder
+
+# ============================================================================
+# CONFIGURATION FIELDS
+# ============================================================================
+
+# Jira Configuration
+jira_info_path:
+  prompt: "Path to .env file containing Jira credentials?"
+  default: "{project-root}/.env"
+  result: "{value}"
+
+# Document Output
+output_document_path:
+  prompt: "Where should SDD documents (PRD, tech specs) be saved?"
+  default: "{project-root}/docs/sdd"
+  result: "{value}"
+
+# Commit Message Template
+commit_msg_template_path:
+  prompt: "Path to commit message template (leave empty to use module default)?"
+  default: "{project-root}/bmad/sdd/templates/commit/template.md"
+  result: "{value}"
+
+# Pull Request Template
+pr_template_path:
+  prompt: "Path to pull request template (leave empty to use module default)?"
+  default: "{project-root}/bmad/sdd/templates/pr/template.md"
+  result: "{value}"
+
+# Architecture Documentation (Optional)
+tech_architecture_doc_path:
+  prompt: "Path to technical architecture documentation (optional, leave empty to skip)?"
+  default: ""
+  result: "{value}"
+
+# Unit Test Timing
+write_unit_test_along_with_task:
+  prompt: "Should unit tests be written together with implementation?"
+  default: "true"
+  result: "{value}"
+  single-select:
+    - value: "true"
+      label: "Yes - Write tests during implementation"
+    - value: "false"
+      label: "No - Write tests after human review"
+
+# Static Configuration Values
+prd_template_path:
+  result: "{project-root}/bmad/sdd/templates/prd/template.md"
+
+tech_spec_template_path:
+  result: "{project-root}/bmad/sdd/templates/tech-spec/template.md"
+
+module_version:
+  result: "1.0.0-alpha"
