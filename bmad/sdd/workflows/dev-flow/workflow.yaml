@@ -1,0 +1,34 @@
+# Dev Flow Workflow Configuration
+name: dev-flow
+description: "Complete development cycle from Jira task to pull request: tech spec → implementation → tests → PR"
+author: "SDD Module"
+
+# Paths
+installed_path: "{project-root}/bmad/sdd/workflows/dev-flow"
+template: false # Action workflow - no template
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/sdd/config.yaml"
+output_folder: "{config_source}:output_document_path"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# SDD-specific configuration
+jira_info_path: "{config_source}:jira_info_path"
+tech_spec_template_path: "{config_source}:tech_spec_template_path"
+tech_architecture_doc_path: "{config_source}:tech_architecture_doc_path"
+commit_msg_template_path: "{config_source}:commit_msg_template_path"
+pr_template_path: "{config_source}:pr_template_path"
+write_unit_test_along_with_task: "{config_source}:write_unit_test_along_with_task"
+
+# Output configuration for tech spec
+tech_spec_output_file: "{output_folder}/tech-spec/tech-spec-{jira_proj}-{jira_number}-{task_name}-{{date}}.md"
+
+# Sub-workflows
+sync_jira_workflow: "{project-root}/bmad/sdd/workflows/sync-jira/workflow.yaml"
+
+# Invocation control
+standalone: true

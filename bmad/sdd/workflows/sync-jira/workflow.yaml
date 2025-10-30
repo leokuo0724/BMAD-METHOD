@@ -1,0 +1,20 @@
+# Sync Jira Utility Workflow Configuration
+name: sync-jira
+description: "Fetch and sync Jira ticket data for use in SDD workflows"
+author: "SDD Module"
+
+# Paths
+installed_path: "{project-root}/bmad/sdd/workflows/sync-jira"
+template: false # Utility workflow - no template
+instructions: "{installed_path}/instructions.md"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/sdd/config.yaml"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+
+# SDD-specific configuration
+jira_info_path: "{config_source}:jira_info_path"
+
+# Invocation control
+standalone: false # Only called by other workflows
