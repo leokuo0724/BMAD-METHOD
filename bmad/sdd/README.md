@@ -47,12 +47,12 @@ Development Agent & Implementation Expert
 - `*commit` - Create phased git commit
 - `*review` - Review implementation against tech spec
 
-### Workflows (3 - MVP)
+### Workflows (6)
 
-#### Core Workflows
+#### End-to-End Workflows
 
 **1. product-flow**
-Transform product requirements into structured PRD with Epic/Story/Task breakdown
+Transform product requirements into structured PRD with Epic/Story/Task breakdown (includes extensive clarification loop)
 
 **Usage:**
 ```
@@ -70,7 +70,7 @@ workflow product-flow
 **Output:** `docs/sdd/prd/prd-{PROJ}-{NUM}-{scope}.md`
 
 **2. dev-flow**
-Complete development cycle from Jira task to pull request
+Complete development cycle from Jira task to pull request (planning + implementation)
 
 **Usage:**
 ```
@@ -92,9 +92,67 @@ workflow dev-flow
 - Tech spec: `docs/sdd/tech-spec/tech-spec-{PROJ}-{NUM}-{task}.md`
 - Pull request on GitHub
 
+#### Standalone Workflows (Phase 2)
+
+**3. create-prd**
+Standalone PRD generation - simpler version for when requirements are already clear
+
+**Usage:**
+```
+workflow create-prd
+```
+
+**Process:**
+1. Accept input (Jira ticket or manual)
+2. Optional quick clarification
+3. Decompose into Epic/Story/Task
+4. Generate complete PRD
+
+**Output:** `docs/sdd/prd/prd-{PROJ}-{NUM}-{scope}.md`
+
+**Best for:** When requirements are well-defined and you need quick PRD generation without extensive Q&A
+
+**4. create-tech-spec**
+Standalone tech spec generation - planning phase only, can implement later
+
+**Usage:**
+```
+workflow create-tech-spec
+```
+
+**Process:**
+1. Accept task (Jira or manual)
+2. Load codebase context
+3. Design technical solution
+4. Break down into phases
+5. Generate complete tech spec
+
+**Output:** `docs/sdd/tech-spec/tech-spec-{PROJ}-{NUM}-{task}.md`
+
+**Best for:** When you want to plan implementation separately from execution. Use with implement-task workflow.
+
+**5. implement-task**
+Implementation-only workflow - assumes tech spec already exists
+
+**Usage:**
+```
+workflow implement-task
+```
+
+**Process:**
+1. Load existing tech spec
+2. Review implementation plan
+3. Execute phase-by-phase implementation
+4. Generate tests
+5. Create pull request
+
+**Output:** Pull request on GitHub
+
+**Best for:** When tech spec is already created and you want to focus purely on execution.
+
 #### Utility Workflows
 
-**3. sync-jira**
+**6. sync-jira**
 Fetch and sync Jira ticket data (used internally by other workflows)
 
 ## Quick Start
@@ -144,9 +202,12 @@ sdd/
 │   ├── dev-agent.agent.yaml
 │   └── dev-agent-sidecar/
 ├── workflows/
-│   ├── product-flow/
-│   ├── dev-flow/
-│   └── sync-jira/
+│   ├── product-flow/          # End-to-end PRD with clarification
+│   ├── dev-flow/              # End-to-end dev cycle
+│   ├── create-prd/            # Standalone PRD generation
+│   ├── create-tech-spec/      # Standalone tech spec
+│   ├── implement-task/        # Implementation-only
+│   └── sync-jira/             # Jira utility
 ├── templates/
 │   ├── commit/
 │   ├── pr/
@@ -180,6 +241,35 @@ JIRA_API_TOKEN=your_api_token
 JIRA_USER_EMAIL=your_email@domain.com
 ```
 
+## Workflow Selection Guide
+
+### When to Use Each Workflow
+
+**Use product-flow when:**
+- Requirements are vague or need extensive clarification
+- You need comprehensive Q&A with stakeholders
+- Complex feature requiring Epic/Story breakdown
+- First time working with this type of requirement
+
+**Use create-prd when:**
+- Requirements are already clear and well-defined
+- You need quick PRD generation
+- Time-sensitive documentation needed
+- Simple feature or enhancement
+
+**Use dev-flow when:**
+- You want complete end-to-end development (planning + implementation)
+- You're working on a straightforward task
+- You prefer guided step-by-step process
+- One-shot approach preferred
+
+**Use create-tech-spec + implement-task when:**
+- You want to separate planning from execution
+- Need to review tech spec before starting implementation
+- Team lead needs to approve plan first
+- Want flexibility to pause between planning and coding
+- Multiple developers may implement from same spec
+
 ## Examples
 
 ### Example 1: Creating a PRD from Jira Ticket
@@ -195,7 +285,7 @@ Load pm-agent
 
 **Result:** `docs/sdd/prd/prd-FIS-00001-global-search.md`
 
-### Example 2: Implementing a Task
+### Example 2: Implementing a Task (End-to-End)
 
 ```
 Load dev-agent
@@ -211,9 +301,46 @@ Load dev-agent
 - Tech spec: `docs/sdd/tech-spec/tech-spec-FIS-00002-fe-global-search-bar.md`
 - Pull request with all changes
 
+### Example 3: Quick PRD Generation
+
+```
+workflow create-prd
+> Select: Jira ticket
+> Enter: FIS-00003
+> Scope name: notification-system
+> Quick clarification? Skip
+> PRD generated
+```
+
+**Result:** `docs/sdd/prd/prd-FIS-00003-notification-system.md` (faster than product-flow)
+
+### Example 4: Planning Then Implementing Separately
+
+**Step 1 - Create Tech Spec:**
+```
+workflow create-tech-spec
+> Select: Jira task
+> Enter: FIS-00004
+> Task name: be-notification-api
+> Review plan → Complete
+```
+
+**Result:** `docs/sdd/tech-spec/tech-spec-FIS-00004-be-notification-api.md`
+
+**Step 2 - Implement Later:**
+```
+workflow implement-task
+> Tech spec path: docs/sdd/tech-spec/tech-spec-FIS-00004-be-notification-api.md
+> Review plan → Proceed
+> All phases implemented
+> PR created
+```
+
+**Result:** Pull request with implementation following the tech spec
+
 ## Development Roadmap
 
-### Phase 1: MVP (Current)
+### Phase 1: MVP ✅ (Completed)
 - [x] PM Agent with PRD generation
 - [x] Dev Agent with full dev cycle
 - [x] Product-flow workflow
@@ -221,10 +348,10 @@ Load dev-agent
 - [x] Sync-jira utility
 - [x] Basic templates
 
-### Phase 2: Enhancement (Planned)
-- [ ] create-prd standalone workflow
-- [ ] create-tech-spec standalone workflow
-- [ ] implement-task standalone workflow
+### Phase 2: Enhancement ✅ (Completed)
+- [x] create-prd standalone workflow
+- [x] create-tech-spec standalone workflow
+- [x] implement-task standalone workflow
 - [ ] Enhanced codebase pattern recognition
 - [ ] Template customization options
 - [ ] Progress resumption for interrupted workflows
