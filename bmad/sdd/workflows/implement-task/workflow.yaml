@@ -1,0 +1,29 @@
+# Implement Task Workflow Configuration
+name: implement-task
+description: "Implementation-only workflow - assumes tech spec already exists, pure execution workflow"
+author: "SDD Module"
+
+# Paths
+installed_path: "{project-root}/bmad/sdd/workflows/implement-task"
+template: false # Action workflow - no template
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/sdd/config.yaml"
+output_folder: "{config_source}:output_document_path"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# SDD-specific configuration
+commit_msg_template_path: "{config_source}:commit_msg_template_path"
+pr_template_path: "{config_source}:pr_template_path"
+write_unit_test_along_with_task: "{config_source}:write_unit_test_along_with_task"
+
+# Required input documents
+required_inputs:
+  - tech_spec: "Path to tech spec document (from create-tech-spec workflow)"
+
+# Invocation control
+standalone: true

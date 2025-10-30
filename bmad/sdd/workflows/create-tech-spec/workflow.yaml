@@ -1,0 +1,37 @@
+# Create Tech Spec Workflow Configuration
+name: create-tech-spec
+description: "Standalone tech spec generation workflow - planning phase only, can resume with implement-task later"
+author: "SDD Module"
+
+# Paths
+installed_path: "{project-root}/bmad/sdd/workflows/create-tech-spec"
+template: "{installed_path}/template.md"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/sdd/config.yaml"
+output_folder: "{config_source}:output_document_path"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# SDD-specific configuration
+jira_info_path: "{config_source}:jira_info_path"
+tech_spec_template_path: "{config_source}:tech_spec_template_path"
+tech_architecture_doc_path: "{config_source}:tech_architecture_doc_path"
+
+# Output configuration for tech spec
+default_output_file: "{output_folder}/tech-spec/tech-spec-{jira_proj}-{jira_number}-{task_name}-{{date}}.md"
+
+# Sub-workflows
+sync_jira_workflow: "{project-root}/bmad/sdd/workflows/sync-jira/workflow.yaml"
+
+# Optional input documents
+recommended_inputs:
+  - jira_task: "Jira task number or manual task description"
+  - architecture_docs: "{config_source}:tech_architecture_doc_path"
+  - prd: "Related PRD document (optional)"
+
+# Invocation control
+standalone: true
