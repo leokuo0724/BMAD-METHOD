@@ -68,11 +68,20 @@ workflow product-flow
 **Process:**
 
 1. Accept input (Jira ticket or manual)
-2. Create PRD template
-3. Generate clarification questions
-4. Interactive Q&A loop
-5. Decompose into Epic/Story/Task
+2. Auto-generate scope name from requirement analysis
+3. Generate PM-level clarification questions
+4. Interactive Q&A loop (documented in final PRD)
+5. Decompose into Epic/Story/Task with Task-level estimation
 6. Generate complete PRD
+
+**Key Features:**
+
+- AI auto-generates task short names (scope names)
+- Automatic progression after Jira fetch (no manual continue)
+- Clarification Q&A preserved in final document
+- PM-appropriate questions (avoids deep technical details)
+- Task-level story point estimates (FE/BE separated for different developers)
+- Story points calculated as sum of task estimates
 
 **Output:** `docs/sdd/prd/prd-{PROJ}-{NUM}-{scope}.md`
 

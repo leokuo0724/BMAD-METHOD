@@ -24,6 +24,14 @@
 
 ---
 
+## Clarification History
+
+This section documents the Q&A process used to refine and clarify the requirements.
+
+{{clarification_qa}}
+
+---
+
 {{epic_section}}
 
 ---
@@ -58,6 +66,8 @@
 **Total Stories:** {{story_count}}
 **Total Tasks:** {{task_count}}
 **Total Story Points:** {{total_story_points}}
+
+**Note:** Story points are calculated as the sum of all Task-level estimates. Each Task (Frontend and Backend) is estimated individually since different developers will implement them.
 
 ---
 

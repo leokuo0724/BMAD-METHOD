@@ -37,6 +37,8 @@ Select [1/2]:</ask>
     <action>Extract requirement details from Jira ticket</action>
     <action>Store as {{requirement_text}}</action>
     <action>Store ticket metadata: title, description, labels, priority, etc.</action>
+    <action>Inform user: "Successfully fetched Jira ticket {{jira_ticket_number}}. Proceeding to analyze requirement..."</action>
+    <action>Automatically proceed to next step without waiting for user input</action>
   </check>
 
   <check if="jira fetch failed">
@@ -74,14 +76,20 @@ You can include:
 <step n="3" goal="Initialize PRD template">
 <action>Create the PRD document structure using the template at {prd_template_path}</action>
 
-<ask>What is the scope name for this PRD?
+<action>Analyze the {{requirement_text}} and generate a concise scope name automatically:
 
-This will be used in the filename: prd-{{jira_proj}}-{{jira_number}}-[scope-name].md
+Guidelines for scope name generation:
 
-Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-authentication"):</ask>
+- Extract the core feature or capability from the requirement
+- Use kebab-case format (lowercase with hyphens)
+- Keep it short and descriptive (2-4 words maximum)
+- Focus on the "what" not the "how"
+- Examples: "global-search", "user-authentication", "payment-gateway", "notification-system"
 
-<action>Store as {{scope_name}}</action>
-<action>Validate that scope_name is kebab-case format</action>
+Generate the scope name based on requirement analysis.</action>
+
+<action>Store the generated name as {{scope_name}}</action>
+<action>Inform user: "Generated scope name: {{scope_name}}"</action>
 
 <action>Determine the output file path: {output_folder}/prd/prd-{{jira_proj}}-{{jira_number}}-{{scope_name}}.md</action>
 <action>Create the output directory if it doesn't exist</action>
@@ -99,27 +107,39 @@ Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-au
 <step n="4" goal="Analyze requirement and generate clarifying questions">
 <action>Analyze the {{requirement_text}} systematically to identify gaps, ambiguities, and areas needing clarification</action>
 
-<action>Apply the PM Agent's requirement_analysis framework:
+<action>Apply the PM Agent's requirement_analysis framework with PM-level focus (avoid deep technical details):
 
-1. **Clarity**: Are all terms clearly defined?
-2. **Completeness**: Are all scenarios covered?
-3. **Testability**: Can we verify completion?
-4. **Scope**: Are boundaries well-defined?
-5. **Dependencies**: What prerequisites exist?
-6. **Impact**: What business value is delivered?</action>
+1. **Clarity**: Are all terms and features clearly defined from user/business perspective?
+2. **Completeness**: Are all user scenarios and use cases covered?
+3. **Testability**: Can we verify completion from business/product perspective?
+4. **Scope**: Are boundaries well-defined? What's in and out of scope?
+5. **Dependencies**: What other features or systems does this depend on?
+6. **Impact**: What business value is delivered? Who are the users?</action>
 
-<action>Generate targeted clarifying questions organized by category:
+<action>Generate targeted clarifying questions at PM-appropriate level organized by category:
 
-- Scope and Boundaries
-- User Experience and Behavior
-- Technical Constraints
-- Data Requirements
-- Dependencies
-- Success Criteria</action>
+**Product-level questions (focus here):**
 
-<action>Present the questions to {user_name} in a clear, organized format</action>
+- Scope and Boundaries - What's included/excluded?
+- User Experience and Behavior - How will users interact with this?
+- Business Value - What problem does this solve?
+- Success Criteria - How do we measure success?
+- User Personas - Who are the target users?
 
-<action>Explain: "I've identified several areas that need clarification before I can create a complete PRD. Let's work through these questions together."</action>
+**Avoid overly technical questions such as:**
+
+- Implementation details (database schema, API design, etc.)
+- Code architecture decisions
+- Low-level technical constraints
+- Infrastructure concerns
+
+Keep questions at product/feature level, not implementation level.</action>
+
+<action>Initialize clarification record to be saved in the PRD document later:
+
+Store all Q&A pairs in {{clarification_qa}} for inclusion in final document</action>
+
+<action>Inform user: "I've identified several product-level areas that need clarification before I can create a complete PRD. Let's work through these questions together. All Q&A will be documented in the final PRD."</action>
 
 <template-output>clarification_questions</template-output>
 </step>
@@ -131,23 +151,32 @@ Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-au
 
 - Ask the question clearly
 - Wait for user response
-- Probe deeper if the answer is vague or incomplete
+- Record both question AND answer in {{clarification_qa}} list
+- Probe deeper if the answer is vague or incomplete (but stay at PM level)
 - Confirm understanding by restating the answer</action>
 
-<action>As answers are collected, update your understanding of the requirement</action>
+<action>As answers are collected:
+
+- Update your understanding of the requirement
+- Append to {{clarification_qa}} in structured format:
+
+  **Q:** [Question text]
+  **A:** [Answer from user]</action>
 
 <action>After each round of questions, assess whether:
 
-- All critical ambiguities are resolved
+- All critical product/business ambiguities are resolved
 - The requirement is now clear enough to decompose into Epic/Story/Task
-- Any new questions have emerged from the answers</action>
+- Any new product-level questions have emerged from the answers</action>
 
 <check if="new questions emerged">
   <action>Present the new questions and continue the clarification loop</action>
+  <action>Continue recording all Q&A in {{clarification_qa}}</action>
 </check>
 
 <check if="user indicates clarity or all questions answered">
   <action>Summarize the complete understanding of the requirement</action>
+  <action>Prepare the complete {{clarification_qa}} section for inclusion in PRD</action>
   <ask>Does this summary accurately capture the requirement? Is there anything else we need to clarify? [yes - proceed / no - continue clarifying]</ask>
 
 <action if="user confirms yes">Break the loop and proceed to step 6</action>
@@ -175,9 +204,9 @@ Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-au
 <action>Break down into Stories using the PM Agent's story_decomposition principles:
 
 1. Each Story must deliver business value independently
-2. Stories should be completable within 1-2 sprints (max 8 points)
+2. Stories should be completable within 1-2 sprints
 3. Stories must have clear acceptance criteria
-4. Frontend and backend tasks should be separated
+4. Frontend and backend tasks should be separated (different developers)
 5. Dependencies should be identified and ordered
 6. Each task should include unit test considerations</action>
 
@@ -187,22 +216,44 @@ Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-au
 - Story description (what and why)
 - Business impact statement (what value does this deliver?)
 - Acceptance criteria (Given-When-Then format or checklist)
-- Story point estimate using Fibonacci scale (0.5, 1, 2, 3, 5, 8)
-- Tasks breakdown (FE and BE separated)</action>
+- Tasks breakdown (FE and BE separated)
 
-<action>For each Task, define:
+**CRITICAL:** Story-level points are NOT estimated. Story points = sum of all Task points.</action>
+
+<action>For each Task, define and estimate:
 
 - Task description (clear, specific implementation step)
-- Technical notes (patterns, libraries, approaches)
-- Estimate (included in Story points)
-- Test considerations (unit tests needed)</action>
+- Task type (Frontend or Backend)
+- **Story point estimate using Fibonacci scale (0.5, 1, 2, 3, 5, 8)**
+  - 0.5 points (4 hours) - Trivial changes, minimal risk
+  - 1 point (8 hours) - Simple, well-understood tasks
+  - 2 points (16 hours) - Moderate complexity
+  - 3 points (24 hours) - Complex but clear approach
+  - 5 points (40 hours) - Significant complexity or uncertainty
+  - 8 points (64 hours) - Maximum task size, consider breaking down
+- Technical notes (patterns, libraries, approaches - high-level only)
+- Test considerations (unit tests needed)
+
+**Estimation considerations:**
+
+- Frontend and Backend are estimated separately since different developers will work on them
+- Consider complexity, uncertainty, dependencies, and testing requirements
+- Each task represents atomic work that one developer completes</action>
+
+<action>Calculate Story-level points:
+
+For each Story:
+
+- Sum all Task points to get Story total
+- Story points = SUM(all frontend task points + all backend task points)</action>
 
 <action>Review the complete breakdown for:
 
 - Logical flow and dependencies
-- Balanced Story sizes
-- Clear separation of concerns
-- Testability of all tasks</action>
+- Balanced Task sizes (prefer 1-3 points, avoid many 5-8 point tasks)
+- Clear separation of concerns (FE/BE)
+- Testability of all tasks
+- Realistic estimates per task</action>
 
 <template-output>epic_story_task_breakdown</template-output>
 </step>
@@ -223,6 +274,13 @@ Provide a short, descriptive name in kebab-case (e.g., "global-search", "user-au
 - Clarified and refined requirement description
 - Key assumptions and decisions
 
+**Clarification Q&A Section (NEW):**
+
+- Include the complete {{clarification_qa}} record
+- Format as a clear Q&A list showing the collaborative clarification process
+- This provides context for future readers on how requirements were refined
+- Title: "## Clarification History"
+
 **Epic Section (if applicable):**
 
 - Epic name and description
@@ -234,9 +292,14 @@ For each Story:
 
 - Story name and description
 - Business impact statement
-- Story points
+- **Story points (calculated as sum of all task points)**
 - Acceptance criteria
-- Task breakdown (FE/BE separated)
+- Task breakdown with the following for each task:
+  - Task description
+  - Task type (Frontend/Backend)
+  - **Task story points** (individual estimate)
+  - Technical notes (high-level)
+  - Test considerations
 - Dependencies
 
 **Additional Sections:**
@@ -247,6 +310,8 @@ For each Story:
 
 <action>Ensure all variables in the template are replaced with actual content</action>
 <action>Format the document with proper markdown structure, headings, and lists</action>
+<action>Ensure Task-level story points are clearly displayed for each task</action>
+<action>Ensure Story-level points show as sum of task points</action>
 <action>Save the complete PRD to the output file</action>
 
 <template-output>complete_prd_document</template-output>
