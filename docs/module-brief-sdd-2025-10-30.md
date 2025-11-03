@@ -56,12 +56,14 @@ Professional and neutral. Agents communicate clearly and efficiently, focusing o
 **Role:** Requirements analysis and product specification generation
 
 **Expertise:**
+
 - Product requirement clarification
 - Epic and Story decomposition
 - Acceptance criteria definition
 - Story point estimation (Fibonacci scale, 1 point = 8 hours)
 
 **Key Capabilities:**
+
 - Parse Jira tickets or manual requirement inputs
 - Interactive requirement clarification
 - Generate structured PRD documents
@@ -69,6 +71,7 @@ Professional and neutral. Agents communicate clearly and efficiently, focusing o
 - Define deliverable business impacts per Story
 
 **Signature Commands:**
+
 - `analyze-requirement` - Analyze and clarify product requirements
 - `create-prd` - Generate complete PRD document
 - `clarify-scope` - Interactive requirement clarification session
@@ -80,6 +83,7 @@ Professional and neutral. Agents communicate clearly and efficiently, focusing o
 **Role:** Technical planning and implementation execution
 
 **Expertise:**
+
 - Technical specification creation
 - Codebase analysis and pattern recognition
 - Implementation with best practices
@@ -87,6 +91,7 @@ Professional and neutral. Agents communicate clearly and efficiently, focusing o
 - Git workflow management
 
 **Key Capabilities:**
+
 - Generate detailed tech specs from Jira tasks
 - Analyze existing codebase and architecture docs
 - Implement features following project patterns
@@ -95,6 +100,7 @@ Professional and neutral. Agents communicate clearly and efficiently, focusing o
 - Generate pull requests with proper documentation
 
 **Signature Commands:**
+
 - `create-tech-spec` - Generate technical specification
 - `implement-task` - Execute implementation
 - `run-tests` - Generate and run unit tests
@@ -124,6 +130,7 @@ Essential functionality that delivers primary value:
 **Purpose:** Transform product requirements into structured PRD with Epic/Story/Task breakdown
 
 **Process:**
+
 1. Accept input (Jira ticket number OR manual requirement)
 2. Create PRD template document
 3. AI generates clarification questions
@@ -144,6 +151,7 @@ Essential functionality that delivers primary value:
 **Purpose:** Complete development cycle from Jira task to pull request
 
 **Process:**
+
 1. Input Jira task number
 2. Fetch task details from Jira
 3. Generate tech spec document:
@@ -223,6 +231,7 @@ Supporting operations and maintenance:
 **As a Product Manager**, I want to transform a Jira epic into a detailed PRD with properly scoped stories and tasks, so that my engineering team has clear, actionable work items.
 
 **User Journey:**
+
 1. PM loads `pm-agent`
 2. PM runs `product-flow` workflow
 3. PM provides Jira ticket number (e.g., FIS-00001)
@@ -239,6 +248,7 @@ Supporting operations and maintenance:
 **As an Engineer**, I want to implement a Jira task with AI assistance that generates the tech spec, writes the code, creates tests, and prepares the PR, so that I can focus on architecture decisions and code review rather than mechanical implementation.
 
 **User Journey:**
+
 1. Engineer loads `dev-agent`
 2. Engineer runs `dev-flow` workflow
 3. Engineer provides Jira task number (e.g., FIS-00002)
@@ -257,6 +267,7 @@ Supporting operations and maintenance:
 **As a Team Lead**, I want to ensure consistent development practices across my team by having all implementations follow the spec-first approach, so that code quality remains high and onboarding new team members is easier.
 
 **User Journey:**
+
 1. Team adopts SDD module as standard workflow
 2. All features start with PRD from `product-flow`
 3. All tasks start with tech spec from `dev-flow`
@@ -273,16 +284,19 @@ Supporting operations and maintenance:
 ### Data Requirements
 
 **Configuration Files:**
+
 - `.env` file containing Jira credentials and API endpoints
 - Commit message template (provided by module)
 - Pull request template (provided by module)
 - Technical architecture documentation (optional, codebase analysis fallback)
 
 **Document Storage:**
+
 - PRD documents: `{project-root}/docs/sdd/prd/`
 - Tech spec documents: `{project-root}/docs/sdd/tech-spec/`
 
 **External Data Sources:**
+
 - Jira API for ticket retrieval
 - GitHub API for PR creation
 - Git repository for codebase analysis
@@ -290,21 +304,25 @@ Supporting operations and maintenance:
 ### Integration Points
 
 **Jira Integration:**
+
 - API authentication via `.env` configuration
 - Ticket retrieval by ticket number
 - Support for custom required fields (manual ticket creation in MVP)
 
 **GitHub Integration:**
+
 - `gh` command for PR creation
 - PR template population
 - Branch and commit management
 
 **Git Integration:**
+
 - Commit message templating
 - Phased commits during implementation
 - Branch naming conventions
 
 **Codebase Analysis:**
+
 - Read existing architecture documentation
 - Pattern recognition from codebase
 - Dependency analysis
@@ -312,16 +330,19 @@ Supporting operations and maintenance:
 ### Dependencies
 
 **External Tools:**
+
 - Jira API access
 - GitHub CLI (`gh` command)
 - Git command-line tools
 
 **BMAD Core Dependencies:**
+
 - Core workflow engine
 - Template system
 - File I/O operations
 
 **Optional Dependencies:**
+
 - Architecture documentation (enhances tech spec quality)
 - Existing coding standards documents
 
@@ -330,6 +351,7 @@ Supporting operations and maintenance:
 **Complexity Level:** Complex
 
 **Complexity Drivers:**
+
 1. **Multi-Phase Workflows**: Both product-flow and dev-flow have 8+ steps with conditional logic
 2. **External Integrations**: Jira API, GitHub API, Git operations
 3. **Stateful Processes**: Must track progress through long workflows
@@ -338,6 +360,7 @@ Supporting operations and maintenance:
 6. **Codebase Analysis**: Dynamic pattern recognition and architecture understanding
 
 **Technical Challenges:**
+
 - Parsing Jira custom fields (workaround: manual ticket creation)
 - Maintaining context across long workflows
 - Handling implementation errors gracefully
@@ -363,24 +386,28 @@ How we'll know the module is successful:
 ### Quality Standards
 
 **PRD Quality:**
+
 - All requirements unambiguous and testable
 - Stories have clear business impact
 - Tasks properly scoped (0.5-8 story points)
 - Acceptance criteria complete
 
 **Tech Spec Quality:**
+
 - Implementation approach clearly documented
 - Dependencies identified
 - Impact scope defined
 - Effort estimates accurate within 20%
 
 **Code Quality:**
+
 - Follows existing project patterns
 - Passes linting and formatting checks
 - Unit tests achieve >80% coverage
 - PR descriptions complete and clear
 
 **Process Quality:**
+
 - All steps completed in order
 - No skipped documentation
 - Human review points respected
@@ -405,26 +432,31 @@ How we'll know the module is successful:
 **Components:**
 
 **Agents (2):**
+
 - `pm-agent` - Product Manager Agent
 - `dev-agent` - Development Agent
 
 **Workflows (2 core + 1 utility):**
+
 - `product-flow` - Complete PRD generation workflow
 - `dev-flow` - Complete development workflow
 - `sync-jira` - Jira data retrieval
 
 **Templates:**
+
 - PRD document template
 - Tech spec document template
 - Commit message template (provided)
 - Pull request template (provided)
 
 **Configuration:**
+
 - Module config with all installation parameters
 - `.env` template for Jira credentials
 - Document output path configuration
 
 **Deliverables:**
+
 - Functional product-flow (Jira input + manual input)
 - Functional dev-flow (tech spec → implementation → tests → PR)
 - Complete module documentation
@@ -438,22 +470,26 @@ How we'll know the module is successful:
 **Components:**
 
 **Workflows (3 feature workflows):**
+
 - `create-prd` - Standalone PRD generation
 - `create-tech-spec` - Standalone tech spec generation
 - `implement-task` - Implementation-only workflow
 
 **Enhanced Features:**
+
 - Improved codebase pattern recognition
 - Better story point estimation algorithms
 - Template customization options
 - Progress resumption for interrupted workflows
 
 **Documentation:**
+
 - Best practices guide
 - Troubleshooting documentation
 - Video tutorials or walkthroughs
 
 **Deliverables:**
+
 - Feature workflow suite
 - Enhanced pattern matching
 - Comprehensive troubleshooting guide
@@ -465,24 +501,28 @@ How we'll know the module is successful:
 **Components:**
 
 **Advanced Features:**
+
 - Jira ticket auto-creation (solving custom field challenges)
 - Multi-task batch processing
 - Architecture document auto-generation from implementations
 - Code review quality scoring
 
 **Optimizations:**
+
 - Faster codebase analysis
 - Improved context management
 - Better error recovery
 - Workflow progress persistence
 
 **Nice-to-Haves:**
+
 - Integration with other project management tools (Linear, Asana)
 - Slack/Discord notifications
 - Metrics dashboard
 - Team analytics
 
 **Deliverables:**
+
 - Automated Jira ticket creation
 - Performance optimizations
 - Extended integrations
@@ -494,16 +534,19 @@ How we'll know the module is successful:
 ### Special Touches
 
 **Smart Defaults:**
+
 - Auto-detect project naming conventions
 - Learn from past PRDs for consistency
 - Remember user preferences across sessions
 
 **Context Awareness:**
+
 - Reference related past tickets
 - Suggest similar implementations from history
 - Warn about potential conflicts with in-flight work
 
 **Progressive Disclosure:**
+
 - Start simple, reveal complexity only when needed
 - Adaptive questioning based on requirement clarity
 - Skip obvious questions for experienced users
@@ -511,11 +554,13 @@ How we'll know the module is successful:
 ### Easter Eggs and Delighters
 
 **Efficiency Celebrations:**
+
 - Acknowledge when tech specs are approved without changes
 - Celebrate successful first-time PR approvals
 - Track and display time saved vs manual process
 
 **Smart Suggestions:**
+
 - "I notice this is similar to FIS-00042, would you like to review that approach?"
 - "Based on your codebase, I recommend using the existing SearchService pattern"
 - "This task might benefit from splitting into two smaller tasks"
@@ -535,46 +580,56 @@ While maintaining professional neutrality, the module embodies the philosophy of
 ### Technical Risks
 
 **Risk:** Jira API custom field handling
+
 - **Impact:** Cannot auto-create tickets with custom required fields
 - **Mitigation:** Phase 1 uses manual ticket creation; Phase 3 addresses automation
 
 **Risk:** Codebase pattern recognition accuracy
+
 - **Impact:** Generated code might not match project style
 - **Mitigation:** Human review gate before committing; optional architecture doc input
 
 **Risk:** Long workflow context loss
+
 - **Impact:** AI might lose track of decisions in 10+ step workflows
 - **Mitigation:** Status tracking in tech spec; workflow resumption capability
 
 **Risk:** Test execution environment issues
+
 - **Impact:** Unit tests might fail due to environment problems
 - **Mitigation:** Clear error messages; option to skip test execution and generate only
 
 ### Usability Risks
 
 **Risk:** Learning curve for new users
+
 - **Impact:** Team might resist adoption
 - **Mitigation:** Comprehensive documentation; example walkthroughs; progressive complexity
 
 **Risk:** Over-reliance on AI decisions
+
 - **Impact:** Engineers might not critically review generated specs/code
 - **Mitigation:** Mandatory review gates; emphasize human-as-architect role in docs
 
 **Risk:** Workflow interruption handling
+
 - **Impact:** Users might need to restart if session breaks
 - **Mitigation:** Status field in tech spec allows resumption; save progress frequently
 
 ### Scope Risks
 
 **Risk:** Feature creep into Phase 1
+
 - **Impact:** Delayed MVP delivery
 - **Mitigation:** Strict MVP scope definition; track enhancement requests for Phase 2
 
 **Risk:** Underestimating Jira integration complexity
+
 - **Impact:** Sync-jira workflow might take longer than expected
 - **Mitigation:** Simple API wrapper approach; defer complex parsing to Phase 2
 
 **Risk:** Template customization demands
+
 - **Impact:** Every team wants different PRD/tech spec formats
 - **Mitigation:** Phase 1 provides good defaults; Phase 2 adds customization
 
@@ -602,21 +657,27 @@ While maintaining professional neutrality, the module embodies the philosophy of
 ### Key Design Decisions
 
 **Decision:** Separate pm-agent and dev-agent rather than single orchestrator
+
 - **Rationale:** Clear role separation; users load appropriate agent for their role; simpler mental model
 
 **Decision:** Tech spec is a document, not just in-memory state
+
 - **Rationale:** Creates knowledge base; enables resumption; facilitates team communication
 
 **Decision:** Mandatory human review gates
+
 - **Rationale:** Maintains human oversight; prevents AI errors; builds trust
 
 **Decision:** Configurable unit test timing
+
 - **Rationale:** Some teams prefer review before tests; flexibility increases adoption
 
 **Decision:** Phased commits during implementation
+
 - **Rationale:** Creates logical history; enables partial rollback; shows progress
 
 **Decision:** Module-provided templates with override option
+
 - **Rationale:** Good defaults lower barrier to entry; customization available for mature users
 
 ### Open Questions
@@ -712,10 +773,12 @@ While maintaining professional neutrality, the module embodies the philosophy of
 ### C. Data Structures and Schemas
 
 **PRD Structure:**
+
 ```markdown
 # PRD: {Title}
 
 ## Metadata
+
 - Jira: {PROJ-NUM}
 - Date: {date}
 - Author: {user}
@@ -723,63 +786,78 @@ While maintaining professional neutrality, the module embodies the philosophy of
 ## Epic: {Epic Name} (if applicable)
 
 ### Story: {Story Name}
+
 **Story Points:** {points}
 **Acceptance Criteria:**
+
 - [ ] AC 1
 - [ ] AC 2
 
 #### Tasks:
+
 - [ ] FE: {Task description}
 - [ ] BE: {Task description}
 ```
 
 **Tech Spec Structure:**
+
 ```markdown
 # Tech Spec: {Task Name}
 
 ## Metadata
+
 - Jira: {TASK-NUM}
 - Date: {date}
 - Engineer: {user}
 
 ## Technical Solution
+
 {Implementation approach}
 
 ## Scope of Impact
+
 {Files and modules affected}
 
 ## Task Breakdown
+
 1. Phase 1: {description}
 2. Phase 2: {description}
 
 ## Technical Dependencies
+
 {Libraries, services, other tasks}
 
 ## Implementation Notes
+
 {Patterns, conventions, gotchas}
 
 ## Effort Estimation
+
 - Complexity: {Low/Medium/High}
 - Confidence: {Low/Medium/High}
 
 ## Status
+
 {Planning/In Progress/Review/Complete}
 ```
 
 ### D. Integration Specifications
 
 **Jira API Integration:**
+
 - Endpoint: Configured in `.env` as `JIRA_API_URL`
 - Authentication: API token in `.env` as `JIRA_API_TOKEN`
 - Methods: GET issue by key
 - Error handling: Graceful fallback to manual input
 
 **GitHub Integration:**
+
 - Tool: `gh` CLI command
 - PR template: `{project-root}/.github/pull_request_template.md` or module-provided
 - Branch naming: Auto-detect from git config or use `feature/{JIRA-NUM}-{slug}`
 
 **Git Integration:**
+
 - Commit template: Module-provided template with placeholders
 - Commit frequency: Per implementation phase
 - Message format: Conventional Commits or custom template
