@@ -1,0 +1,162 @@
+<task id="bmad/sdd/tasks/generate-commit.xml" name="Generate Commit">
+  <objective>Generate and create a concise git commit following SDD streamlined commit format</objective>
+
+  <llm critical="true">
+    <mandate>Follow the streamlined commit format from {project-root}/bmad/sdd/templates/commit/template.md</mandate>
+    <mandate>Keep commit messages concise - subject line under 50 characters</mandate>
+    <mandate>Always include Jira reference if working on a Jira task</mandate>
+    <mandate>Execute ALL steps in exact order</mandate>
+  </llm>
+
+  <flow>
+    <step n="1" title="Check git status and staged changes">
+      <action>Run git status to check current repository state</action>
+      <action>Identify staged files (if any)</action>
+      <action>Identify unstaged files (if any)</action>
+      <action>Display summary of changes to user</action>
+    </step>
+
+    <step n="2" title="Determine commit scope">
+      <ask>What files should be included in this commit?
+
+1. **Staged files only** - Use currently staged files
+2. **Specific files** - Select specific files to stage and commit
+3. **All changes** - Stage and commit all changes
+
+Select [1/2/3]:</ask>
+
+      <check if="user selected 2">
+        <ask>Please specify which files to include (space-separated paths):</ask>
+        <action>Stage the specified files using git add</action>
+      </check>
+
+      <check if="user selected 3">
+        <action>Stage all changes using git add -A</action>
+      </check>
+
+      <action>Confirm final list of files to be committed</action>
+    </step>
+
+    <step n="3" title="Gather commit context">
+      <ask>Is this commit related to a Jira ticket? [yes/no]</ask>
+
+      <check if="user says yes">
+        <ask>Please provide the Jira ticket number (e.g., PROJ-123):</ask>
+        <action>Store as {{jira_ticket}}</action>
+      </check>
+
+      <check if="user says no">
+        <action>Set {{jira_ticket}} = null</action>
+      </check>
+
+      <ask>Brief description of what this commit does (will be used for commit message):
+
+Describe in imperative mood (e.g., "add", "fix", "update", "refactor")</ask>
+
+      <action>Store user's description as {{commit_description}}</action>
+    </step>
+
+    <step n="4" title="Analyze changes and determine commit type">
+      <action>Review the diff of staged changes to understand the nature of modifications</action>
+
+      <action>Determine appropriate commit type based on changes:
+- **feat**: New feature or functionality added
+- **fix**: Bug fix or issue resolution
+- **refactor**: Code refactoring without behavior change
+- **test**: Adding or updating tests
+- **docs**: Documentation changes
+- **chore**: Maintenance tasks, dependency updates</action>
+
+      <action>Auto-select commit type based on analysis</action>
+      <action>Inform user: "Detected commit type: {{commit_type}}"</action>
+    </step>
+
+    <step n="5" title="Generate streamlined commit message">
+      <action>Generate commit message following streamlined format:
+
+**Format:**
+```
+<type>: <brief description>
+
+Jira: <ticket> (if applicable)
+```
+
+**Rules:**
+- Subject line must be under 50 characters
+- Use imperative mood (add, fix, update, not added, fixed, updated)
+- Be concise and clear
+- Skip detailed body unless complex changes require explanation</action>
+
+      <action>Create commit message as:
+```
+{{commit_type}}: {{commit_description}}
+{{#if jira_ticket}}
+Jira: {{jira_ticket}}
+{{/if}}
+```
+</action>
+
+      <action>Display proposed commit message to user</action>
+
+      <ask>Review the commit message. Options:
+
+1. **Commit** - Create commit with this message
+2. **Edit** - Modify the commit message
+3. **Cancel** - Abort commit
+
+Select [1/2/3]:</ask>
+
+      <check if="user selected 2">
+        <ask>Please provide your custom commit message:</ask>
+        <action>Use user's custom message</action>
+      </check>
+
+      <check if="user selected 3">
+        <action>Abort commit process</action>
+        <action>Inform user: "Commit cancelled. Changes remain staged."</action>
+        <goto step="end">Exit task</goto>
+      </check>
+    </step>
+
+    <step n="6" title="Create commit">
+      <action>Execute git commit with the finalized message</action>
+      <action>Capture commit hash</action>
+      <action>Display commit confirmation:
+
+✅ Commit created successfully!
+
+Commit: {{commit_hash}}
+Message: {{final_commit_message}}
+Files: {{files_committed}}</action>
+    </step>
+
+    <step n="7" title="Post-commit options" optional="true">
+      <ask>Would you like to:
+
+1. **Push** - Push commit to remote
+2. **Done** - Finish (commit remains local)
+
+Select [1/2]:</ask>
+
+      <check if="user selected 1">
+        <action>Check current branch name</action>
+        <action>Execute git push</action>
+        <action>Confirm push success</action>
+      </check>
+    </step>
+  </flow>
+
+  <validation>
+    <check>Commit message follows streamlined format</check>
+    <check>Subject line is under 50 characters</check>
+    <check>Jira reference included if applicable</check>
+    <check>Commit type is appropriate for changes</check>
+    <check>Imperative mood used in description</check>
+  </validation>
+
+  <llm final="true">
+    <mandate>This task provides a standalone way to create commits following SDD conventions</mandate>
+    <mandate>Can be used independently or called from workflows</mandate>
+    <mandate>Maintains consistency with dev-flow commit strategy</mandate>
+  </llm>
+</task>
