@@ -231,6 +231,79 @@ Fetch and sync Jira ticket data (used internally by other workflows)
    - Review implementation phases
    - Approve final PR
 
+## Standalone Tasks
+
+SDD provides reusable tasks that can be invoked independently in Claude Code or other environments.
+
+### generate-commit
+
+Create a streamlined git commit following SDD conventions.
+
+**Usage in Claude Code:**
+
+```
+/generate-commit
+```
+
+**Features:**
+
+- Interactive file selection (staged/specific/all)
+- Auto-detects commit type from changes
+- Streamlined commit message format (< 50 chars)
+- Optional Jira ticket reference
+- Option to push after commit
+
+**Example Workflow:**
+
+```
+/generate-commit
+> Select: Specific files
+> Files: src/auth/controller.ts src/auth/service.ts
+> Jira: FIS-123
+> Description: add user authentication endpoint
+> Type detected: feat
+> Commit created: feat: add user authentication endpoint
+```
+
+### create-pr
+
+Create a streamlined pull request following SDD conventions.
+
+**Usage in Claude Code:**
+
+```
+/create-pr
+```
+
+**Features:**
+
+- Checks GitHub CLI (gh) availability and auth
+- Auto-pushes branch if needed
+- Analyzes commits to generate concise PR summary
+- Streamlined PR format (no verbose details)
+- Optional tech spec linking
+- Optional Jira ticket reference
+- Option to add reviewers
+
+**Example Workflow:**
+
+```
+/create-pr
+> Jira ticket: FIS-123
+> Tech spec: docs/sdd/tech-spec/tech-spec-FIS-123-auth-endpoint.md
+> Generated summary: "Implements user authentication endpoint with JWT support"
+> Key changes detected (3-5 bullet points)
+> Test coverage: 85%
+> PR created: https://github.com/org/repo/pull/456
+```
+
+**When to Use Tasks:**
+
+- **generate-commit**: When you want to create commits manually outside of dev-flow
+- **create-pr**: When you have commits ready but didn't use dev-flow
+- **Quick commits**: During exploratory coding or bug fixes
+- **Flexibility**: When you need more control than workflow automation provides
+
 ## Module Structure
 
 ```
@@ -247,6 +320,9 @@ sdd/
 │   ├── create-tech-spec/      # Standalone tech spec
 │   ├── implement-task/        # Implementation-only
 │   └── sync-jira/             # Jira utility
+├── tasks/                     # ⭐ NEW: Reusable standalone tasks
+│   ├── generate-commit.xml    # Create streamlined git commits
+│   └── create-pr.xml          # Create streamlined pull requests
 ├── templates/
 │   ├── commit/
 │   ├── pr/

@@ -1,0 +1,327 @@
+<task id="bmad/sdd/tasks/create-pr.xml" name="Create Pull Request">
+  <objective>Generate and create a streamlined pull request following SDD PR format conventions</objective>
+
+  <llm critical="true">
+    <mandate>Follow the streamlined PR format from {project-root}/bmad/sdd/templates/pr/template.md</mandate>
+    <mandate>Keep PR descriptions concise and focused on essentials</mandate>
+    <mandate>Avoid verbose technical explanations - link to tech spec instead</mandate>
+    <mandate>Execute ALL steps in exact order</mandate>
+  </llm>
+
+  <prerequisites>
+    <requirement>GitHub CLI (gh) must be installed and authenticated</requirement>
+    <requirement>Current branch should have commits ready to PR</requirement>
+    <requirement>Changes should be pushed to remote</requirement>
+  </prerequisites>
+
+  <flow>
+    <step n="1" title="Verify prerequisites and git status">
+      <action>Check if gh CLI is installed by running: gh --version</action>
+
+      <check if="gh not installed">
+        <action>Inform user: "GitHub CLI (gh) is not installed. Please install it first: https://cli.github.com/"</action>
+        <action>Abort task</action>
+        <goto step="end">Exit task</goto>
+      </check>
+
+      <action>Check if gh is authenticated by running: gh auth status</action>
+
+      <check if="not authenticated">
+        <ask>GitHub CLI is not authenticated. Would you like to authenticate now? [yes/no]</ask>
+
+        <check if="user says yes">
+          <action>Run: gh auth login</action>
+          <action>Wait for authentication to complete</action>
+        </check>
+
+        <check if="user says no">
+          <action>Inform user: "Authentication required to create PR. Aborting."</action>
+          <goto step="end">Exit task</goto>
+        </check>
+      </check>
+
+      <action>Get current branch name using: git branch --show-current</action>
+      <action>Store as {{current_branch}}</action>
+
+      <action>Check if branch is pushed to remote</action>
+
+      <check if="branch not pushed">
+        <ask>Current branch "{{current_branch}}" is not pushed to remote. Push now? [yes/no]</ask>
+
+        <check if="user says yes">
+          <action>Execute: git push -u origin {{current_branch}}</action>
+          <action>Verify push success</action>
+        </check>
+
+        <check if="user says no">
+          <action>Inform user: "Branch must be pushed to create PR. Aborting."</action>
+          <goto step="end">Exit task</goto>
+        </check>
+      </check>
+
+      <action>Get commit summary for current branch:
+- Count commits ahead of base branch
+- List commit messages
+- Identify files changed</action>
+
+      <action>Display branch status to user:
+
+Branch: {{current_branch}}
+Commits: {{commit_count}} ahead of base
+Files changed: {{files_changed_count}}</action>
+    </step>
+
+    <step n="2" title="Gather PR metadata">
+      <ask>Is this PR related to a Jira ticket? [yes/no]</ask>
+
+      <check if="user says yes">
+        <ask>Please provide the Jira ticket number (e.g., PROJ-123):</ask>
+        <action>Store as {{jira_ticket}}</action>
+        <action>Parse to get {{jira_proj}} and {{jira_number}}</action>
+      </check>
+
+      <check if="user says no">
+        <action>Set {{jira_ticket}} = null</action>
+      </check>
+
+      <ask>Do you have a tech spec document for this work? [yes/no/path]
+
+If yes, provide the path or URL to the tech spec:</ask>
+
+      <check if="user provides path">
+        <action>Store as {{tech_spec_path}}</action>
+      </check>
+
+      <check if="user says no">
+        <action>Set {{tech_spec_path}} = null</action>
+      </check>
+    </step>
+
+    <step n="3" title="Analyze changes and generate PR summary">
+      <action>Review git diff and commit messages to understand changes</action>
+
+      <action>Generate concise 1-2 sentence summary of what this PR accomplishes:
+- Focus on WHAT changed, not HOW
+- Use clear, direct language
+- Highlight business value or technical benefit</action>
+
+      <action>Store as {{pr_summary}}</action>
+
+      <action>Identify 3-5 key changes at high level:
+- Avoid exhaustive file lists
+- Focus on significant modifications
+- Group related changes together</action>
+
+      <action>Store as {{key_changes}} list</action>
+    </step>
+
+    <step n="4" title="Generate PR title">
+      <action>Generate PR title following format:
+
+**With Jira:**
+[{{jira_proj}}-{{jira_number}}] <brief description in ~50 chars>
+
+**Without Jira:**
+<brief description in ~50 chars>
+
+**Title Guidelines:**
+- Clear and concise
+- Describes the change at high level
+- Imperative mood preferred (Add, Fix, Update)
+- Under 70 characters total</action>
+
+      <action>Generate proposed title and store as {{pr_title}}</action>
+
+      <action>Display to user: "Proposed PR title: {{pr_title}}"</action>
+
+      <ask>Use this title or provide custom title? [use/custom]</ask>
+
+      <check if="user says custom">
+        <ask>Please provide your custom PR title:</ask>
+        <action>Use user's custom title</action>
+      </check>
+    </step>
+
+    <step n="5" title="Check for test coverage">
+      <ask>Have tests been added or updated for this PR? [yes/no]</ask>
+
+      <check if="user says yes">
+        <ask>What is the test coverage percentage (if known)?</ask>
+        <action>Store as {{test_coverage}}</action>
+
+        <ask>What type of tests? (e.g., Unit, Integration, E2E):</ask>
+        <action>Store as {{test_type}}</action>
+      </check>
+
+      <check if="user says no">
+        <action>Set {{test_coverage}} = "N/A"</action>
+        <action>Set {{test_type}} = "None added"</action>
+      </check>
+    </step>
+
+    <step n="6" title="Check for special notes">
+      <ask>Are there any critical notes for reviewers? (breaking changes, deployment steps, etc.) [yes/no]</ask>
+
+      <check if="user says yes">
+        <ask>Please describe the critical notes:</ask>
+        <action>Store as {{pr_notes}}</action>
+      </check>
+
+      <check if="user says no">
+        <action>Set {{pr_notes}} = null</action>
+      </check>
+    </step>
+
+    <step n="7" title="Generate streamlined PR description">
+      <action>Generate PR body following streamlined format:
+
+```markdown
+## Summary
+
+{{pr_summary}}
+
+{{#if jira_ticket}}
+## Jira
+
+{{jira_ticket}}
+{{/if}}
+
+{{#if tech_spec_path}}
+## Tech Spec
+
+{{tech_spec_path}}
+{{/if}}
+
+## Key Changes
+
+{{#each key_changes}}
+- {{this}}
+{{/each}}
+
+## Testing
+
+- Test coverage: {{test_coverage}}
+- Test type: {{test_type}}
+
+{{#if pr_notes}}
+## Notes
+
+{{pr_notes}}
+{{/if}}
+```
+</action>
+
+      <action>Display complete PR preview to user:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PULL REQUEST PREVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Title: {{pr_title}}
+
+{{pr_body}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+</action>
+
+      <ask>Review the pull request. Options:
+
+1. **Create PR** - Create pull request with this content
+2. **Edit** - Modify the PR description
+3. **Cancel** - Abort PR creation
+
+Select [1/2/3]:</ask>
+
+      <check if="user selected 2">
+        <ask>Which part would you like to edit?
+
+1. Title
+2. Summary
+3. Key changes
+4. Notes
+5. Complete rewrite
+
+Select [1-5]:</ask>
+
+        <action>Allow user to edit selected section</action>
+        <action>Regenerate PR preview</action>
+        <goto step="7">Return to review</goto>
+      </check>
+
+      <check if="user selected 3">
+        <action>Inform user: "PR creation cancelled."</action>
+        <goto step="end">Exit task</goto>
+      </check>
+    </step>
+
+    <step n="8" title="Create pull request">
+      <action>Execute gh pr create command:
+
+gh pr create \
+  --title "{{pr_title}}" \
+  --body "{{pr_body}}"
+</action>
+
+      <action>Capture PR URL from command output</action>
+
+      <action>Display success message:
+
+✅ Pull request created successfully!
+
+PR URL: {{pr_url}}
+Branch: {{current_branch}}
+Title: {{pr_title}}
+
+Next steps:
+- Review the PR on GitHub
+- Request reviewers
+- Monitor CI/CD checks
+- Address review feedback
+</action>
+    </step>
+
+    <step n="9" title="Post-creation options" optional="true">
+      <ask>Would you like to:
+
+1. **Open PR** - Open PR in browser
+2. **Add reviewers** - Add reviewers to the PR
+3. **Done** - Finish
+
+Select [1/2/3]:</ask>
+
+      <check if="user selected 1">
+        <action>Execute: gh pr view --web</action>
+      </check>
+
+      <check if="user selected 2">
+        <ask>Enter reviewer usernames (comma-separated):</ask>
+        <action>Execute: gh pr edit --add-reviewer {{reviewers}}</action>
+        <action>Confirm reviewers added</action>
+      </check>
+    </step>
+  </flow>
+
+  <validation>
+    <check>PR title is concise (under 70 characters)</check>
+    <check>Summary is 1-2 sentences</check>
+    <check>Key changes are high-level (not exhaustive file lists)</check>
+    <check>Jira reference included if applicable</check>
+    <check>Tech spec linked if available</check>
+    <check>Test information is provided</check>
+    <check>No verbose or redundant sections</check>
+  </validation>
+
+  <error-handling>
+    <case>If gh CLI not installed: Provide installation link and abort</case>
+    <case>If not authenticated: Offer to authenticate or abort</case>
+    <case>If branch not pushed: Offer to push or abort</case>
+    <case>If PR creation fails: Display error and suggest solutions</case>
+  </error-handling>
+
+  <llm final="true">
+    <mandate>This task provides a standalone way to create PRs following SDD conventions</mandate>
+    <mandate>Can be used independently or called from workflows</mandate>
+    <mandate>Maintains consistency with dev-flow PR generation</mandate>
+    <mandate>Focuses on concise, reviewer-friendly PR descriptions</mandate>
+  </llm>
+</task>
