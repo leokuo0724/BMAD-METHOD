@@ -1,13 +1,11 @@
 # Commit Message Template for SDD Module
 
-## Format
+## Streamlined Format (Recommended)
 
 ```
-<type>(<scope>): <subject>
+<type>: <brief description>
 
-<body>
-
-<footer>
+Jira: <PROJ-NUM>
 ```
 
 ## Type
@@ -19,15 +17,47 @@
 - **test**: Adding or updating tests
 - **chore**: Maintenance tasks
 
-## Example
+## Guidelines
+
+- Keep subject line under 50 characters
+- Use imperative mood (e.g., "add", "fix", "update")
+- Skip detailed body unless complex changes require explanation
+- Always include Jira reference
+- Focus on WHAT changed, not HOW (code diff shows how)
+
+## Examples
+
+**Simple Feature:**
 
 ```
-feat(auth): implement user authentication
+feat: add user authentication endpoint
 
-- Add login endpoint with JWT generation
-- Implement password hashing with bcrypt
-- Add authentication middleware
-- Include unit tests for auth service
+Jira: PROJ-123
+```
+
+**Bug Fix:**
+
+```
+fix: resolve login session timeout issue
+
+Jira: PROJ-124
+```
+
+**Complex Change (when body is needed):**
+
+```
+refactor: restructure authentication flow
+
+Changed from session-based to JWT tokens to support
+mobile apps and improve scalability.
+
+Jira: PROJ-125
+```
+
+**Test Addition:**
+
+```
+test: add unit tests for auth service
 
 Jira: PROJ-123
 ```

@@ -96,20 +96,30 @@ workflow dev-flow
 
 **Process:**
 
-1. Fetch Jira task details
-2. Analyze codebase context
-3. Generate technical specification
-4. Review and approve tech spec
-5. Implement solution phase-by-phase
-6. Human review implementation
-7. Generate unit tests (if configured)
-8. Final review
-9. Create pull request
+1. Fetch Jira task details (auto-proceeds to next step)
+2. Analyze codebase context and generate tech spec (context included in document)
+3. Review tech spec and choose commit strategy
+4. Implement solution phase-by-phase (with AI tracking)
+5. Human review implementation (with AI summary)
+6. Generate unit tests (if configured)
+7. Final review
+8. Handle commits (if manual strategy selected)
+9. Create pull request (streamlined format)
+
+**Key Features:**
+
+- Auto-proceed after Jira fetch (no manual confirmation)
+- Codebase context analysis saved in tech spec document
+- **Flexible commit strategy**: Choose between auto-commit per phase or manual control
+- **AI implementation tracking**: Tech spec shows which phases were AI-implemented
+- **Streamlined commits**: Concise commit messages (under 50 chars) with Jira reference
+- **Streamlined PRs**: Focused PR descriptions without verbose details
+- Task name auto-generated from Jira ticket
 
 **Output:**
 
-- Tech spec: `docs/sdd/tech-spec/tech-spec-{PROJ}-{NUM}-{task}.md`
-- Pull request on GitHub
+- Tech spec: `docs/sdd/tech-spec/tech-spec-{PROJ}-{NUM}-{task}.md` (includes codebase context and AI implementation summary)
+- Pull request on GitHub (concise format)
 
 #### Standalone Workflows (Phase 2)
 
