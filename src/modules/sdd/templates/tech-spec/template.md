@@ -35,9 +35,23 @@
 
 ---
 
+## Codebase Context Analysis
+
+{{codebase_analysis}}
+
+---
+
 ## Task Breakdown
 
 {{task_breakdown}}
+
+---
+
+## Implementation Summary
+
+This section tracks the actual implementation progress and is updated during dev-flow execution.
+
+{{ai_implementation_summary}}
 
 ---
 

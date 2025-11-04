@@ -1,47 +1,30 @@
-# Pull Request Template for SDD Module
+# Pull Request Template for SDD Module (Streamlined)
 
 ## Summary
 
-Brief description of changes made in this PR.
+Brief 1-2 sentence description of what this PR accomplishes.
 
-## Jira Ticket
+## Jira
 
-- **Ticket**: [PROJ-XXX](https://your-domain.atlassian.net/browse/PROJ-XXX)
-- **Tech Spec**: Link to tech spec document
+PROJ-XXX
 
-## Technical Approach
+## Tech Spec
 
-Describe the technical solution and key decisions made.
+Link to tech spec document (or path in repo)
 
-## Changes Made
+## Key Changes
 
 - Change 1
 - Change 2
 - Change 3
 
-## Testing Performed
+(Focus on WHAT changed at high level, not exhaustive file lists)
 
-- [ ] Unit tests added/updated
-- [ ] Manual testing completed
-- [ ] Integration tests passed
-- [ ] Test coverage: XX%
+## Testing
 
-## Screenshots/Demos
+- Unit tests: XX% coverage
+- Test type: Unit / Integration / E2E
 
-(If UI changes, add screenshots or demo GIFs)
+## Notes
 
-## Breaking Changes
-
-(If any, describe what breaks and migration path)
-
-## Deployment Notes
-
-(If any special deployment steps needed)
-
-## Checklist
-
-- [ ] Code follows project conventions
-- [ ] Tests pass locally
-- [ ] Documentation updated
-- [ ] Tech spec matches implementation
-- [ ] Ready for review
+(Optional: Only include if there are breaking changes, special deployment steps, or critical reviewer notes)
