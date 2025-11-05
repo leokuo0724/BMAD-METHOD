@@ -381,6 +381,7 @@ JIRA_USER_EMAIL=your_email@domain.com
 - You're working on a straightforward task
 - You prefer guided step-by-step process
 - One-shot approach preferred
+- **Small to medium codebase** with sufficient context window
 
 **Use create-tech-spec + implement-task when:**
 
@@ -389,6 +390,96 @@ JIRA_USER_EMAIL=your_email@domain.com
 - Team lead needs to approve plan first
 - Want flexibility to pause between planning and coding
 - Multiple developers may implement from same spec
+- **Large codebase** where analysis might consume too much context
+
+---
+
+## Context Window Management ⚡
+
+**Dev-flow automatically manages context for you!**
+
+### How It Works
+
+When you use `dev-flow`, after generating the tech spec, the AI will:
+
+1. ✅ **Assess remaining context window**
+2. 🎯 **Recommend the best path forward**
+3. 📋 **Provide exact commands if a new session is needed**
+
+You don't need to guess or monitor - the workflow handles it automatically.
+
+### Automatic Context Detection
+
+**Sufficient context (>60% remaining):**
+
+- ✅ Proceeds automatically to implementation
+- No user action needed
+
+**Warning level (40-60% remaining):**
+
+- ℹ️ Shows a notice with recommendation
+- Offers to continue or resume in fresh session
+- You decide based on your preference
+
+**Critical level (<40% remaining):**
+
+- ⚠️ Strong recommendation to resume in fresh session
+- Displays exact resume commands
+- You can still override if needed
+
+### What You'll See
+
+If context is low, dev-flow will display:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  Context Window Alert
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Tech spec complete and saved
+📄 Location: docs/sdd/tech-spec/tech-spec-FIS-123-feature.md
+
+Recommended Next Steps:
+
+1. Clear this session (or start new chat)
+
+2. Resume implementation:
+   workflow implement-task
+
+3. When prompted, provide tech spec path:
+   docs/sdd/tech-spec/tech-spec-FIS-123-feature.md
+
+This will load your tech spec and give you full context for implementation.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Would you like to:
+1. Stop here - Resume in fresh session (recommended ⭐)
+2. Continue anyway - Proceed with current context
+```
+
+### Manual Workflow Split (Alternative)
+
+You can also manually split workflows if preferred:
+
+**Planning:**
+
+```bash
+workflow create-tech-spec
+```
+
+**Implementation:**
+
+```bash
+workflow implement-task
+```
+
+### Benefits of Automatic Context Management
+
+- ✅ **Zero guesswork** - AI estimates and recommends for you
+- ✅ **Simple** - Just follow the provided commands
+- ✅ **Flexible** - Can override recommendations if needed
+- ✅ **Seamless** - Tech spec serves as natural checkpoint
+- ✅ **Quality** - Ensures full context for implementation
 
 ## Examples
 

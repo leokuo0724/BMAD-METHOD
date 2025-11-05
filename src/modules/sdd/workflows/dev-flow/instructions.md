@@ -74,6 +74,107 @@ Select [1/2/3]:</ask>
 <check if="user selected 1">
   <action>Update tech spec status to "In Progress"</action>
 
+<action>Assess available context window:
+
+**Context Check:**
+Estimate remaining context capacity based on tokens used so far for Jira fetch, codebase analysis, and tech spec generation.
+
+**Thresholds:**
+
+- Sufficient (>60% remaining): Proceed normally
+- Warning (40-60% remaining): Warn but allow continuation
+- Critical (<40% remaining): Strong recommendation to resume in fresh session
+</action>
+
+  <check if="estimated remaining context < 40%">
+    <action>Display context alert:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ **Context Window Alert**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The codebase analysis has used significant context. To ensure quality implementation with full context available, we recommend resuming in a fresh session.
+
+**Current Status:**
+✅ Tech spec complete and saved
+📄 Location: {{tech_spec_path}}
+
+**Recommended Next Steps:**
+
+1. **Clear this session** (or start new chat)
+
+2. **Resume implementation:**
+
+   ```
+   workflow implement-task
+   ```
+
+3. **When prompted, provide tech spec path:**
+   ```
+   {{tech_spec_path}}
+   ```
+
+This will:
+
+- Load your tech spec (no re-analysis needed)
+- Give you full context window for implementation
+- Ensure high-quality code generation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+</action>
+
+    <ask>Would you like to:
+
+1. **Stop here** - Resume in fresh session (recommended ⭐)
+2. **Continue anyway** - Proceed with current context (may hit limits)
+
+Select [1/2]:</ask>
+
+    <check if="user selected 1">
+      <action>Display completion message:
+
+✅ **Tech Spec Ready**
+
+Your tech spec is saved and ready for implementation.
+
+**Tech Spec:** {{tech_spec_path}}
+
+**To resume:**
+
+1. Start a new session
+2. Run: `workflow implement-task`
+3. Provide: {{tech_spec_path}}
+
+Thank you for using dev-flow! 🚀
+</action>
+<goto step="end">Exit workflow</goto>
+</check>
+
+    <check if="user selected 2">
+      <action>Warn user: "Proceeding with limited context. If you encounter issues, you can always resume later using `workflow implement-task`."</action>
+    </check>
+
+  </check>
+
+  <check if="estimated remaining context between 40-60%">
+    <action>Display context notice:
+
+ℹ️ **Context Window Notice**
+
+Moderate context has been used. Implementation should complete, but for optimal results, you can resume in a fresh session.
+
+**Current:** Tech spec saved to {{tech_spec_path}}
+**Resume:** `workflow implement-task` (in new session)
+
+Continue with current session? [yes/no]</action>
+
+    <check if="user says no">
+      <action>Display resume instructions and exit</action>
+      <goto step="end">Exit workflow</goto>
+    </check>
+
+  </check>
+
 <ask>Choose commit strategy for implementation:
 
 1. **Auto-commit per phase** - AI automatically creates commits after each phase (recommended for streamlined workflow)
