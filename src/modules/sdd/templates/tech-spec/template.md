@@ -1,19 +1,11 @@
 # Tech Spec: {{task_name}}
 
+**Jira:** {{jira_task_number}}
 **Date:** {{date}}
 **Engineer:** {{user_name}}
-**Jira:** {{jira_task_number}}
 **Status:** {{status}}
-
----
-
-## Metadata
-
-- **Jira Task**: {{jira_proj}}-{{jira_number}}
-- **Date Created**: {{date}}
-- **Engineer**: {{user_name}}
-- **Complexity**: {{complexity}}
-- **Confidence**: {{confidence}}
+**Complexity:** {{complexity}}
+**Confidence:** {{confidence}}
 
 ---
 
@@ -69,15 +61,7 @@ This section tracks the actual implementation progress and is updated during dev
 
 ## Effort Estimation
 
-- **Complexity**: {{complexity}} (Low/Medium/High)
-- **Confidence**: {{confidence}} (Low/Medium/High)
 - **Estimated Time**: {{estimated_time}}
-
----
-
-## Status
-
-{{status}} (Planning / In Progress / Review / Complete)
 
 ---
 
