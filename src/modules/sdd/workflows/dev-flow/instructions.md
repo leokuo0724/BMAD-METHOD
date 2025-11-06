@@ -12,6 +12,8 @@
 <action>Store as {{jira_task_number}} and parse to get {{jira_proj}} and {{jira_number}}</action>
 <action>Invoke sync-jira workflow to fetch task details from Jira</action>
 <action>Extract task title, description, acceptance criteria, and labels</action>
+<action>Check for UI spec links in the Jira ticket (in description, comments, or attachments)</action>
+<action>If UI spec link found, store as {{ui_spec_link}}</action>
 <action>Store as {{task_details}}</action>
 <action>Inform user: "Successfully fetched Jira task {{jira_task_number}}. Proceeding to analyze codebase context..."</action>
 <action>Automatically proceed to next step without waiting for user confirmation</action>
