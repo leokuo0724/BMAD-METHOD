@@ -7,6 +7,10 @@
 **Complexity:** {{complexity}}
 **Confidence:** {{confidence}}
 
+{{#if ui_spec_link}}
+**UI Spec:** {{ui_spec_link}}
+{{/if}}
+
 ---
 
 ## Technical Solution

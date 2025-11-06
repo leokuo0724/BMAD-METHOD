@@ -32,6 +32,8 @@ Select [1/2]:</ask>
 
   <check if="jira fetch successful">
     <action>Extract task title, description, acceptance criteria, and labels</action>
+    <action>Check for UI spec links in the Jira ticket (in description, comments, or attachments)</action>
+    <action>If UI spec link found, store as {{ui_spec_link}}</action>
     <action>Store as {{task_details}}</action>
   </check>
 
@@ -206,6 +208,7 @@ Provide a short, descriptive name in kebab-case (e.g., "fe-global-search-bar", "
 - Engineer: {{user_name}}
 - Task: {{task_name}}
 - Status: "Planning"
+- UI Spec: {{ui_spec_link}} (if available)
 
 **Task Overview:**
 
