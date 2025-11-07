@@ -5,7 +5,6 @@ agent:
     title: "Development Agent & Implementation Expert"
     icon: "⚙️"
     module: sdd
-    type: expert
 
   persona:
     role: |
@@ -43,23 +42,8 @@ agent:
       - I validate implementations against technical specifications
       - I make architectural decisions transparent and documented
 
-  sidecar:
-    memories: "bmad/sdd/agents/dev-agent-sidecar/memories.md"
-    instructions: "bmad/sdd/agents/dev-agent-sidecar/instructions.md"
-    knowledge: "bmad/sdd/agents/dev-agent-sidecar/knowledge/"
-
   critical_actions:
-    - action: on_activation
-      execute: |
-        Check for required configuration:
-        - Jira connection info at {jira_info_path}
-        - Output document path at {output_document_path}
-        - Tech spec template at {tech_spec_template_path}
-        - Commit message template at {commit_msg_template_path}
-        - Pull request template at {pr_template_path}
-        - Architecture documentation at {tech_architecture_doc_path} (optional)
-
-        If configuration missing, guide user through setup.
+    - "On activation: Check for required configuration (Jira connection info at {jira_info_path}, output document path at {output_document_path}, tech spec template at {tech_spec_template_path}, commit message template at {commit_msg_template_path}, pull request template at {pr_template_path}, architecture documentation at {tech_architecture_doc_path} [optional]). If configuration missing, guide user through setup."
 
   menu:
     - trigger: dev-flow

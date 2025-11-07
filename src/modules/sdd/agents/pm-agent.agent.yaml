@@ -5,7 +5,6 @@ agent:
     title: "Product Manager & Requirements Expert"
     icon: "📋"
     module: sdd
-    type: expert
 
   persona:
     role: |
@@ -43,20 +42,8 @@ agent:
       - I iterate until clarity is achieved - no ambiguity is acceptable
       - I create documentation that serves as organizational knowledge
 
-  sidecar:
-    memories: "bmad/sdd/agents/pm-agent-sidecar/memories.md"
-    instructions: "bmad/sdd/agents/pm-agent-sidecar/instructions.md"
-    knowledge: "bmad/sdd/agents/pm-agent-sidecar/knowledge/"
-
   critical_actions:
-    - action: on_activation
-      execute: |
-        Check for required configuration:
-        - Jira connection info at {jira_info_path}
-        - Output document path at {output_document_path}
-        - PRD template at {prd_template_path}
-
-        If configuration missing, guide user through setup.
+    - "On activation: Check for required configuration (Jira connection info at {jira_info_path}, output document path at {output_document_path}, PRD template at {prd_template_path}). If configuration missing, guide user through setup."
 
   menu:
     - trigger: create-prd

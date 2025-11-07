@@ -2,7 +2,7 @@
   <objective>Generate and create a streamlined pull request following SDD PR format conventions</objective>
 
   <llm critical="true">
-    <mandate>Follow the streamlined PR format from {project-root}/bmad/sdd/templates/pr/template.md</mandate>
+    <mandate>Load user's custom PR template from {pr_template_path} if available, otherwise use default template</mandate>
     <mandate>Keep PR descriptions concise and focused on essentials</mandate>
     <mandate>Avoid verbose technical explanations - link to tech spec instead</mandate>
     <mandate>Execute ALL steps in exact order</mandate>
@@ -172,8 +172,24 @@ If yes, provide the path or URL to the tech spec:</ask>
       </check>
     </step>
 
-    <step n="7" title="Generate streamlined PR description">
-      <action>Generate PR body following streamlined format:
+    <step n="7" title="Load PR template">
+      <action>Check if custom PR template exists at {pr_template_path}</action>
+
+      <check if="custom template file exists">
+        <action>Read the complete template file from {pr_template_path}</action>
+        <action>Store template content and structure as {{pr_template}}</action>
+        <action>Inform user: "Using custom PR template from {pr_template_path}"</action>
+      </check>
+
+      <check if="custom template does not exist or path is empty">
+        <action>Use default streamlined format with sections: Summary, Jira, Tech Spec, Key Changes, Testing, Notes</action>
+        <action>Store default format as {{pr_template}}</action>
+        <action>Inform user: "Using default SDD PR template"</action>
+      </check>
+    </step>
+
+    <step n="8" title="Generate PR description using template">
+      <action>Generate PR body following the format from {{pr_template}}:
 
 ```markdown
 ## Summary
@@ -245,7 +261,7 @@ Select [1-5]:</ask>
 
         <action>Allow user to edit selected section</action>
         <action>Regenerate PR preview</action>
-        <goto step="7">Return to review</goto>
+        <goto step="8">Return to review</goto>
       </check>
 
       <check if="user selected 3">
@@ -254,7 +270,7 @@ Select [1-5]:</ask>
       </check>
     </step>
 
-    <step n="8" title="Create pull request">
+    <step n="9" title="Create pull request">
       <action>Execute gh pr create command:
 
 gh pr create \
@@ -280,7 +296,7 @@ Next steps:
 </action>
     </step>
 
-    <step n="9" title="Post-creation options" optional="true">
+    <step n="10" title="Post-creation options" optional="true">
       <ask>Would you like to:
 
 1. **Open PR** - Open PR in browser

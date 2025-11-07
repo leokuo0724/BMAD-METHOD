@@ -2,7 +2,7 @@
   <objective>Generate and create a concise git commit following SDD streamlined commit format</objective>
 
   <llm critical="true">
-    <mandate>Follow the streamlined commit format from {project-root}/bmad/sdd/templates/commit/template.md</mandate>
+    <mandate>Load user's custom commit template from {commit_msg_template_path} if available, otherwise use default template</mandate>
     <mandate>Keep commit messages concise - subject line under 50 characters</mandate>
     <mandate>Always include Jira reference if working on a Jira task</mandate>
     <mandate>Execute ALL steps in exact order</mandate>
@@ -56,7 +56,29 @@ Describe in imperative mood (e.g., "add", "fix", "update", "refactor")</ask>
       <action>Store user's description as {{commit_description}}</action>
     </step>
 
-    <step n="4" title="Analyze changes and determine commit type">
+    <step n="4" title="Load commit message template">
+      <action>Check if custom commit template exists at {commit_msg_template_path}</action>
+
+      <check if="custom template file exists">
+        <action>Read the complete template file from {commit_msg_template_path}</action>
+        <action>Store template content and format guidelines as {{commit_template}}</action>
+        <action>Inform user: "Using custom commit template from {commit_msg_template_path}"</action>
+      </check>
+
+      <check if="custom template does not exist or path is empty">
+        <action>Use default streamlined format:
+```
+<type>: <brief description>
+
+Jira: <PROJ-NUM>
+```
+        </action>
+        <action>Store default format as {{commit_template}}</action>
+        <action>Inform user: "Using default SDD commit template"</action>
+      </check>
+    </step>
+
+    <step n="5" title="Analyze changes and determine commit type">
       <action>Review the diff of staged changes to understand the nature of modifications</action>
 
       <action>Determine appropriate commit type based on changes:
@@ -71,23 +93,17 @@ Describe in imperative mood (e.g., "add", "fix", "update", "refactor")</ask>
       <action>Inform user: "Detected commit type: {{commit_type}}"</action>
     </step>
 
-    <step n="5" title="Generate streamlined commit message">
-      <action>Generate commit message following streamlined format:
-
-**Format:**
-```
-<type>: <brief description>
-
-Jira: <ticket> (if applicable)
-```
+    <step n="6" title="Generate commit message using template">
+      <action>Generate commit message following the format from {{commit_template}}:
 
 **Rules:**
 - Subject line must be under 50 characters
 - Use imperative mood (add, fix, update, not added, fixed, updated)
 - Be concise and clear
+- Follow the structure and guidelines from the loaded template
 - Skip detailed body unless complex changes require explanation</action>
 
-      <action>Create commit message as:
+      <action>Create commit message following {{commit_template}} format:
 ```
 {{commit_type}}: {{commit_description}}
 {{#if jira_ticket}}
@@ -118,7 +134,7 @@ Select [1/2/3]:</ask>
       </check>
     </step>
 
-    <step n="6" title="Create commit">
+    <step n="7" title="Create commit">
       <action>Execute git commit with the finalized message</action>
       <action>Capture commit hash</action>
       <action>Display commit confirmation:
@@ -130,7 +146,7 @@ Message: {{final_commit_message}}
 Files: {{files_committed}}</action>
     </step>
 
-    <step n="7" title="Post-commit options" optional="true">
+    <step n="8" title="Post-commit options" optional="true">
       <ask>Would you like to:
 
 1. **Push** - Push commit to remote
