@@ -219,13 +219,28 @@ Select [1/2]:</ask>
 </check>
 
 <check if="commit_strategy == auto">
-  <action>Generate concise commit message using streamlined format:
+  <action>Load commit message template:
 
-Format: <type>: <brief description>
+Check if custom template exists at {commit_msg_template_path}:
+
+- If exists: Read and use custom template format
+- If not: Use default streamlined format
+
+Default format:
+
+```
+<type>: <brief description>
+
+Jira: {{jira_task_number}}
+```
+
+  </action>
+
+<action>Generate concise commit message following the loaded template:
 
 - Keep subject line under 50 characters
 - Use imperative mood (e.g., "add", "fix", "update")
-- Skip detailed body unless complex changes
+- Follow template structure and guidelines
 - Always include: Jira: {{jira_task_number}}
 
 Example:
@@ -280,7 +295,8 @@ Select [1/2/3]:</ask>
   <ask>What adjustments are needed?</ask>
   <action>Make the requested changes</action>
   <check if="commit_strategy == auto">
-    <action>Create concise adjustment commit using streamlined format</action>
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise adjustment commit following the loaded template format</action>
   </check>
   <goto step="5">Return to review</goto>
 </check>
@@ -291,7 +307,8 @@ Select [1/2/3]:</ask>
   <action>Update tech spec with new phase</action>
   <action>Add to {{ai_implementation_summary}}</action>
   <check if="commit_strategy == auto">
-    <action>Create concise commit for new phase</action>
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise commit for new phase following the loaded template format</action>
   </check>
   <goto step="5">Return to review</goto>
 </check>
@@ -314,12 +331,14 @@ Select [1/2/3]:</ask>
 <check if="tests fail">
   <action>Analyze failures and adjust implementation or tests</action>
   <check if="commit_strategy == auto">
-    <action>Create concise commit for fixes</action>
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise commit for fixes following the loaded template format</action>
   </check>
 </check>
 
 <check if="commit_strategy == auto">
-  <action>Create concise commit for test suite using streamlined format</action>
+  <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+  <action>Create concise commit for test suite following the loaded template format</action>
 </check>
 
 <action>Add test info to {{ai_implementation_summary}}</action>
@@ -363,31 +382,32 @@ Select [1/2/3]:</ask>
 </step>
 
 <step n="9" goal="Generate pull request">
-<action>Generate concise PR description using streamlined format:
+<action>Load PR template:
+
+Check if custom template exists at {pr_template_path}:
+
+- If exists: Read and use custom template format and structure
+- If not: Use default streamlined format
+
+Default format structure:
+
+```
+## Summary
+## Jira
+## Tech Spec
+## Changes
+## Testing
+```
+
+  </action>
+
+<action>Generate concise PR description following the loaded template:
 
 **Format Guidelines:**
 
 - Title: [{{jira_proj}}-{{jira_number}}] <brief description in 50 chars>
-- Body: Keep concise and focused on essentials
-
-**Body Structure:**
-
-```
-## Summary
-<1-2 sentence description of what this PR does>
-
-## Jira
-{{jira_task_number}}
-
-## Tech Spec
-<link to tech spec document>
-
-## Changes
-<3-5 bullet points of key changes - NO exhaustive file lists>
-
-## Testing
-<Brief test summary - just coverage % and test type>
-```
+- Body: Follow the structure from loaded template
+- Keep concise and focused on essentials
 
 **What to AVOID:**
 
