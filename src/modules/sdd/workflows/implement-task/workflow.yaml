@@ -23,7 +23,13 @@ write_unit_test_along_with_task: "{config_source}:write_unit_test_along_with_tas
 
 # Required input documents
 required_inputs:
-  - tech_spec: "Path to tech spec document (from create-tech-spec workflow)"
+  - tech_spec_path: "Path to tech spec document (from create-tech-spec or dev-flow workflow)"
+
+# Optional parameters (can be passed from dev-flow)
+optional_inputs:
+  - commit_strategy: "Commit strategy: 'auto' or 'manual' (default: ask user)"
+  - jira_task_number: "Jira task number (extracted from tech spec if not provided)"
 
 # Invocation control
 standalone: true
+can_be_invoked: true # Can be invoked by other workflows (e.g., dev-flow)

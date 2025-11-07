@@ -217,36 +217,248 @@ Select [1/2]:</ask>
 
 <step n="5" goal="Complete dev-flow and provide summary">
 <action>Implement-task workflow has completed successfully</action>
+<action>For each phase in the tech spec task breakdown:</action>
 
-<action>Provide dev-flow completion summary to {user_name}:
+<action>Inform user: "Starting Phase {{current_phase_number}}: {{phase_description}}"</action>
 
-✅ **Dev-Flow Complete**
+<action>Implement the phase following:
 
-**Journey:**
+- Project coding patterns and conventions
+- Architecture guidelines
+- Error handling standards
+- Code quality best practices</action>
 
-1. ✅ Fetched Jira task: {{jira_task_number}}
-2. ✅ Generated tech spec with codebase analysis
-3. ✅ Selected commit strategy: {{commit_strategy}}
-4. ✅ Implemented all phases via implement-task workflow
-5. ✅ Created pull request
+<action>Record this phase as AI-implemented by marking it in {{ai_implementation_summary}} list:
 
-**Results:**
+- Phase {{phase_number}}: {{phase_description}} - Implemented by AI
+- Files: {{files_modified_in_phase}}
+  </action>
 
-- Tech spec: {{tech_spec_path}}
-- Pull request: {{pr_url}}
-- Commit strategy used: {{commit_strategy}}
+<check if="write_unit_test_along_with_task == true">
+  <action>Write unit tests for this phase</action>
+  <action>Run tests to ensure they pass</action>
+  <action>Add test info to {{ai_implementation_summary}}</action>
+</check>
 
-**Next steps:**
+<check if="commit_strategy == auto">
+  <action>Load commit message template:
 
-- Review the PR on GitHub
-- Request code reviewers
-- Monitor CI/CD checks
-- Address review feedback
-- Merge when approved
-- Update Jira task status to "Done"
+Check if custom template exists at {commit_msg_template_path}:
 
-Thank you for using Dev-Flow! 🚀
-</action>
+- If exists: Read and use custom template format
+- If not: Use default streamlined format
+
+Default format:
+
+```
+<type>: <brief description>
+
+Jira: {{jira_task_number}}
+```
+
+  </action>
+
+<action>Generate concise commit message following the loaded template:
+
+- Keep subject line under 50 characters
+- Use imperative mood (e.g., "add", "fix", "update")
+- Follow template structure and guidelines
+- Always include: Jira: {{jira_task_number}}
+
+Example:
+
+```
+feat: add user authentication endpoint
+
+Jira: {{jira_task_number}}
+```
+
+  </action>
+  <action>Create git commit for this phase</action>
+  <action>Inform user: "Phase {{phase_number}} committed."</action>
+</check>
+
+<check if="commit_strategy == manual">
+  <action>Inform user: "Phase {{phase_number}} implementation complete. Files ready for commit (manual strategy selected)."</action>
+</check>
+
+<action>Update tech spec with implementation progress:
+
+- Mark phase as complete
+- Update status field</action>
+
+<template-output>implementation_phase</template-output>
+</step>
+
+<step n="5" goal="Review implementation">
+<action>Present summary of implementation to {user_name}:
+- Phases completed
+- Files modified/created
+- Commits made (if auto-commit strategy)
+- Tests status (if written)
+- {{ai_implementation_summary}} - detailed list of AI-implemented phases</action>
+
+<action>Update tech spec document with "## Implementation Summary" section:
+
+- Include {{ai_implementation_summary}}
+- Mark each phase with "[AI Implemented]" tag
+- List files modified per phase
+- Include test coverage info</action>
+
+<ask>Review the implementation. Would you like to:
+
+1. **Continue** - Proceed to next step
+2. **Adjust** - Make changes to implementation
+3. **Add phase** - Implement additional phase not in spec
+
+Select [1/2/3]:</ask>
+
+<check if="user selected 2">
+  <ask>What adjustments are needed?</ask>
+  <action>Make the requested changes</action>
+  <check if="commit_strategy == auto">
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise adjustment commit following the loaded template format</action>
+  </check>
+  <goto step="5">Return to review</goto>
+</check>
+
+<check if="user selected 3">
+  <ask>Describe the additional phase to implement:</ask>
+  <action>Implement the additional phase</action>
+  <action>Update tech spec with new phase</action>
+  <action>Add to {{ai_implementation_summary}}</action>
+  <check if="commit_strategy == auto">
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise commit for new phase following the loaded template format</action>
+  </check>
+  <goto step="5">Return to review</goto>
+</check>
+
+<template-output>implementation_review</template-output>
+</step>
+
+<step n="6" goal="Generate unit tests" if="write_unit_test_along_with_task == false">
+<action>Generate comprehensive unit test suite covering:
+- Happy path scenarios
+- Edge cases
+- Error handling
+- Integration points</action>
+
+<action>Follow project test framework and patterns</action>
+<action>Target >80% code coverage</action>
+
+<action>Run tests and report results</action>
+
+<check if="tests fail">
+  <action>Analyze failures and adjust implementation or tests</action>
+  <check if="commit_strategy == auto">
+    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+    <action>Create concise commit for fixes following the loaded template format</action>
+  </check>
+</check>
+
+<check if="commit_strategy == auto">
+  <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
+  <action>Create concise commit for test suite following the loaded template format</action>
+</check>
+
+<action>Add test info to {{ai_implementation_summary}}</action>
+
+<template-output>unit_tests</template-output>
+</step>
+
+<step n="7" goal="Final review">
+<action>Present complete implementation summary:
+- All phases implemented
+- Test coverage achieved
+- Total commits made
+- Files changed count
+- AI implementation summary available in tech spec</action>
+
+<ask>Final review. Is everything ready for PR? [yes/no/adjust]</ask>
+
+<check if="user says adjust">
+  <ask>What needs adjustment?</ask>
+  <action>Make the adjustments</action>
+  <goto step="7">Return to final review</goto>
+</check>
+
+<template-output>final_review</template-output>
+</step>
+
+<step n="8" goal="Handle manual commits if needed">
+<check if="commit_strategy == manual">
+  <action>Inform user: "You selected manual commit strategy. Please commit your changes now before creating PR."</action>
+  <ask>Have you committed all changes and pushed to remote? [yes/no]</ask>
+
+  <check if="user says no">
+    <action>Wait for user to complete commits</action>
+    <goto step="8">Return to check again</goto>
+  </check>
+</check>
+
+<action>Check that current branch is pushed to remote</action>
+
+<template-output>commit_verification</template-output>
+</step>
+
+<step n="9" goal="Generate pull request">
+<action>Load PR template:
+
+Check if custom template exists at {pr_template_path}:
+
+- If exists: Read and use custom template format and structure
+- If not: Use default streamlined format
+
+Default format structure:
+
+```
+## Summary
+## Jira
+## Tech Spec
+## Changes
+## Testing
+```
+
+  </action>
+
+<action>Generate concise PR description following the loaded template:
+
+**Format Guidelines:**
+
+- Title: [{{jira_proj}}-{{jira_number}}] <brief description in 50 chars>
+- Body: Follow the structure from loaded template
+- Keep concise and focused on essentials
+
+**What to AVOID:**
+
+- Detailed file lists (reviewers can see diffs)
+- Verbose technical explanations (link to tech spec instead)
+- Redundant checklists (use minimal checklist)
+- Screenshots section if no UI changes
+- Deployment notes unless critical
+  </action>
+
+<action>Execute: gh pr create --title "[{{jira_proj}}-{{jira_number}}] {{pr_title}}" --body "{{pr_description}}"</action>
+
+<action>Capture PR URL from gh command output</action>
+
+<template-output>pull_request</template-output>
+</step>
+
+<step n="10" goal="Complete and provide next steps">
+<action>Update tech spec status to "Complete"</action>
+
+<action>Provide completion summary to {user_name}:
+
+- Tech spec location: {{tech_spec_path}}
+- Pull request URL: {{pr_url}}
+- Total implementation time/effort
+- Test coverage achieved
+- Next steps: Code review, merge, deployment</action>
+
+<action>Thank {user_name} for using Dev Flow workflow</action>
 
 <template-output>workflow_completion</template-output>
 </step>
