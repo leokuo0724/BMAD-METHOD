@@ -373,4 +373,93 @@ Select [1/2/3]:</ask>
 <template-output>completion_confirmation</template-output>
 </step>
 
+<step n="9" goal="Update agent memory with learnings">
+<action>Write to PM Agent's memory file at {project-root}/bmad/sdd/agents/pm-agent-sidecar/memories.md
+
+Append the following structured entry:
+
+---
+
+## Session: {{date}} - {{jira_proj}}-{{jira_number}}
+
+**Requirement:** {{scope_name}}
+
+**Domain Context:**
+
+- Business domain: [Identify from requirement - e.g., e-commerce, fintech, healthcare]
+- Feature category: [e.g., CRUD, Integration, Analytics, UI/UX]
+- Stakeholders involved: [If mentioned]
+
+**Requirement Clarification:**
+
+- Number of clarification questions asked: [Count from Q&A]
+- Key ambiguities resolved: [List 2-3 most important clarifications]
+- Assumptions made: [List key assumptions]
+
+**Decomposition Approach:**
+
+- Epic structure: {{has_epic}} (Yes/No)
+- Number of Stories: [Count]
+- Number of Tasks: [Count]
+- FE/BE split ratio: [Approximate percentage]
+
+**Estimation Summary:**
+
+- Total Story Points: [Sum]
+- Average points per task: [Calculate]
+- Estimation confidence: [High/Medium/Low based on requirement clarity]
+- Complex tasks (5+ points): [List if any]
+
+**Patterns Observed:**
+
+- Similar past requirements: [If user mentioned any]
+- Reusable Story structures: [Note if certain Stories could be templates]
+- Common Task patterns: [e.g., "API integration tasks typically X points"]
+
+**User Preferences Learned:**
+
+- Story granularity preference: [Fine-grained vs high-level]
+- Estimation style: [Conservative vs optimistic]
+- Documentation detail level: [Verbose vs concise]
+- Clarification depth: [How many rounds of Q&A user prefers]
+
+**Quality Indicators:**
+
+- AC completeness: [Well-defined vs needs improvement]
+- Task clarity: [Clear implementation steps vs vague]
+- Dependency identification: [Complete vs missed some]
+
+**Domain Knowledge Gained:**
+[Any new domain-specific terminology, business rules, or patterns learned]
+
+**Calibration Notes:**
+[If this requirement is later implemented, note here for future estimation calibration:
+
+- Actual effort vs estimated
+- Tasks that were underestimated
+- Tasks that were overestimated
+- Patterns for better future estimates]
+
+**Notes for Future:**
+[Insights that would help with similar requirements in the future]
+
+---
+
+</action>
+
+<action>Confirm to user in {communication_language}:
+
+✅ Session learnings saved to agent memory
+
+This helps PM Agent provide better assistance in future sessions by:
+
+- Remembering your requirement analysis preferences
+- Understanding domain patterns
+- Improving estimation accuracy
+- Recognizing common decomposition strategies
+
+Memory file: bmad/sdd/agents/pm-agent-sidecar/memories.md
+</action>
+</step>
+
 </workflow>

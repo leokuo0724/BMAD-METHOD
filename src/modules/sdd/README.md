@@ -255,6 +255,79 @@ Other SDD workflows (dev-flow, create-tech-spec) automatically reference these d
 **7. sync-jira**
 Fetch and sync Jira ticket data (used internally by other workflows)
 
+## Agent Sidecar System
+
+Both PM Agent and Dev Agent use a **sidecar architecture** for persistent learning and knowledge management. The sidecar consists of three components:
+
+### Sidecar Components
+
+**1. instructions.md** (Private Operational Guidelines)
+
+- Agent-specific directives and behavioral rules
+- Workflow invocation instructions
+- Quality standards and best practices
+- Special instructions for specific scenarios
+
+**2. memories.md** (Persistent Learning Storage)
+
+- Automatically written after each workflow completion
+- Captures session learnings, patterns, and insights
+- Records user preferences and project context
+- Stores calibration data for estimation improvements
+
+**3. knowledge/** (Domain-Specific Reference Materials)
+
+- Optional reference documentation
+- Team-specific conventions
+- Domain patterns and terminology
+- Performance considerations
+
+### Automatic Memory Writing
+
+After workflow completion, agents automatically append structured learnings to their `memories.md` files:
+
+**PM Agent** (from product-flow):
+
+- Requirement analysis context
+- Clarification questions and answers
+- Decomposition patterns
+- Estimation data and confidence
+- User preferences (story granularity, estimation style)
+- Domain knowledge gained
+- Calibration notes for future improvements
+
+**Dev Agent** (from dev-flow, create-tech-spec, implement-task):
+
+- Technical context and architecture patterns
+- Implementation approach and challenges
+- Code patterns and conventions observed
+- User preferences (code style, commit frequency)
+- Tech spec accuracy vs actual implementation
+- Test coverage and quality metrics
+- Calibration data for better planning
+
+### Benefits
+
+- **Continuous Learning**: Agents improve over time by learning from each session
+- **Personalization**: Remembers your preferences and adapts to your workflow
+- **Pattern Recognition**: Identifies recurring patterns in requirements and implementations
+- **Estimation Accuracy**: Calibrates story points based on historical data
+- **Context Awareness**: Provides increasingly relevant suggestions and guidance
+
+### Memory File Locations
+
+```
+src/modules/sdd/agents/
+├── pm-agent-sidecar/
+│   ├── instructions.md
+│   ├── memories.md
+│   └── knowledge/
+└── dev-agent-sidecar/
+    ├── instructions.md
+    ├── memories.md
+    └── knowledge/
+```
+
 ## Quick Start
 
 ### For Product Managers

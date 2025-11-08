@@ -326,4 +326,68 @@ Select [1/2/3/4]:</ask>
 <template-output>completion_confirmation</template-output>
 </step>
 
+<step n="11" goal="Update agent memory with learnings">
+<action>Write to Dev Agent's memory file at {project-root}/bmad/sdd/agents/dev-agent-sidecar/memories.md
+
+Append the following structured entry:
+
+---
+
+## Session: {{date}} - {{jira_task_number}} (Tech Spec Only)
+
+**Task:** {{task_name}}
+
+**Technical Context:**
+
+- Frameworks/Technologies identified: [Extract from codebase analysis]
+- Architecture patterns planned: [Extract from tech spec]
+- Key files to be modified: [List from scope of impact]
+
+**Tech Spec Planning:**
+
+- Phases planned: [List phase titles]
+- Complexity assessed: {{complexity_level}}
+- Confidence level: {{confidence_level}}
+- Estimated effort: {{estimated_effort}}
+
+**Codebase Insights:**
+[Any new patterns or architectural insights discovered during codebase analysis that should be remembered]
+
+**Design Decisions:**
+[Key design decisions made in the tech spec - why certain approaches were chosen over alternatives]
+
+**User Preferences Learned:**
+[Any preferences the user expressed during this session - planning depth, phase granularity, documentation style]
+
+**Scope Analysis Quality:**
+
+- Files identification: [Complete vs needs more discovery]
+- Dependencies identified: [Comprehensive vs missed some]
+- Phase breakdown clarity: [Clear vs needs refinement]
+
+**Implementation Readiness:**
+[Assessment of how ready this task is for implementation - are there unknowns that need research first?]
+
+**Notes for Future:**
+[Any insights that would be helpful for similar tech spec planning in the future]
+
+---
+
+</action>
+
+<action>Confirm to user in {communication_language}:
+
+✅ Session learnings saved to agent memory
+
+This helps Dev Agent provide better assistance in future sessions by:
+
+- Remembering your planning preferences
+- Understanding project patterns
+- Improving tech spec quality
+- Recognizing complexity patterns
+
+Memory file: bmad/sdd/agents/dev-agent-sidecar/memories.md
+</action>
+</step>
+
 </workflow>
