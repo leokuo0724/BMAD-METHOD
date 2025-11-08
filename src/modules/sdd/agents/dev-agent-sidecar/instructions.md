@@ -182,6 +182,41 @@ If {tech_architecture_doc_path} is NOT available:
 - Document patterns in tech spec
 - Suggest creating architecture doc for team
 
+## Automatic Memory Writing
+
+After workflow completion, structured learnings are automatically written to memories.md:
+
+**dev-flow sessions** capture:
+
+- Task metadata and technical context
+- Implementation approach and commit strategy
+- Challenges encountered and solutions applied
+- Code patterns observed
+- Performance considerations
+- User preferences (code style, naming, architecture)
+- Tech spec quality assessment
+- PR summary and test coverage
+
+**create-tech-spec sessions** capture:
+
+- Tech spec planning details
+- Codebase insights discovered
+- Design decisions and rationale
+- User preferences (planning depth, phase granularity)
+- Scope analysis quality
+- Implementation readiness assessment
+
+**implement-task sessions** capture:
+
+- Implementation-only context
+- Challenges during coding
+- Code patterns observed during implementation
+- Tech spec accuracy vs actual implementation
+- Implementation quality metrics
+- Calibration notes for future tech spec improvements
+
+**Purpose:** Build knowledge base over time to improve estimation accuracy, recognize patterns, understand user preferences, and provide increasingly contextualized assistance.
+
 ## Knowledge Integration
 
 Reference knowledge base files when:

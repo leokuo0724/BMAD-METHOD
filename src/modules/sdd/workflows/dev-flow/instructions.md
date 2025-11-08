@@ -255,4 +255,72 @@ Thank you for using Dev-Flow! 🚀
 <template-output>workflow_completion</template-output>
 </step>
 
+<step n="11" goal="Update agent memory with learnings">
+<action>Write to Dev Agent's memory file at {project-root}/bmad/sdd/agents/dev-agent-sidecar/memories.md
+
+Append the following structured entry:
+
+---
+
+## Session: {{date}} - {{jira_task_number}}
+
+**Task:** {{task_name}}
+
+**Technical Context:**
+
+- Frameworks/Technologies used: [Extract from codebase analysis]
+- Architecture patterns applied: [Extract from tech spec]
+- Key files modified: [List from implementation]
+
+**Implementation Approach:**
+
+- Phases completed: [List phase titles]
+- Commit strategy: {{commit_strategy}}
+- Test strategy: {{write_unit_test_along_with_task}}
+
+**Challenges & Solutions:**
+[If any significant challenges were encountered during implementation, note them here with solutions applied]
+
+**Code Patterns Observed:**
+[Any new patterns discovered in the codebase that should be remembered for future implementations]
+
+**Performance Considerations:**
+[Any performance-related decisions or optimizations made]
+
+**User Preferences Learned:**
+[Any preferences the user expressed during this session - code style, naming, architecture choices]
+
+**Tech Spec Quality:**
+
+- Accuracy: [How well the tech spec matched actual implementation]
+- Completeness: [Were all phases necessary? Any missing?]
+
+**PR Summary:**
+
+- PR URL: {{pr_url}}
+- Files changed: [Count]
+- Test coverage: [If available]
+
+**Notes for Future:**
+[Any insights that would be helpful for similar tasks in the future]
+
+---
+
+</action>
+
+<action>Confirm to user in {communication_language}:
+
+✅ Session learnings saved to agent memory
+
+This helps Dev Agent provide better assistance in future sessions by:
+
+- Remembering your coding preferences
+- Understanding project patterns
+- Improving tech spec accuracy
+- Recognizing common challenges
+
+Memory file: bmad/sdd/agents/dev-agent-sidecar/memories.md
+</action>
+</step>
+
 </workflow>

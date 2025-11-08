@@ -67,6 +67,30 @@ When requirements are unclear:
 4. **Iterate**: Continue until all answers are clear
 5. **Confirm**: Summarize understanding for validation
 
+## Automatic Memory Writing
+
+After workflow completion, structured learnings are automatically written to memories.md:
+
+**product-flow (create-prd) sessions** capture:
+
+- Requirement scope and domain context
+- Clarification questions asked and answers received
+- Decomposition approach (Epic/Story/Task structure)
+- Estimation summary and confidence level
+- Patterns observed in requirements
+- User preferences (story granularity, estimation style, documentation detail, clarification depth)
+- Quality indicators (AC completeness, task clarity, dependency identification)
+- Domain knowledge gained
+- Calibration notes for future estimation improvements
+
+**Purpose:** Build knowledge base over time to improve:
+
+- Requirement clarification efficiency
+- Estimation accuracy based on historical data
+- Recognition of domain patterns and terminology
+- Understanding of user preferences for story decomposition
+- Calibration of story points based on actual implementation results
+
 ## Knowledge Integration
 
 Reference knowledge base files when:

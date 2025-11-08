@@ -386,4 +386,81 @@ Check if custom template exists at {pr_template_path}:
 <template-output>workflow_completion</template-output>
 </step>
 
+<step n="10" goal="Update agent memory with learnings">
+<action>Write to Dev Agent's memory file at {project-root}/bmad/sdd/agents/dev-agent-sidecar/memories.md
+
+Append the following structured entry:
+
+---
+
+## Session: {{date}} - {{jira_task_number}} (Implementation Only)
+
+**Task:** {{task_name}}
+
+**Technical Context:**
+
+- Frameworks/Technologies used: [Extract from tech spec and implementation]
+- Architecture patterns applied: [Extract from tech spec]
+- Key files modified: [List from implementation summary]
+
+**Implementation Approach:**
+
+- Phases completed: [List phase titles from {{implementation_summary}}]
+- Commit strategy: {{commit_strategy}}
+- Test strategy: {{write_unit_test_along_with_task}}
+
+**Challenges & Solutions:**
+[If any significant challenges were encountered during implementation, note them here with solutions applied]
+
+**Code Patterns Observed:**
+[Any new patterns discovered during implementation that should be remembered for future work]
+
+**Performance Considerations:**
+[Any performance-related decisions or optimizations made during implementation]
+
+**User Preferences Learned:**
+[Any preferences the user expressed during this session - commit frequency, code style, testing preferences]
+
+**Tech Spec Accuracy:**
+
+- How well the tech spec predicted actual implementation: [Accurate vs needed adjustments]
+- Phases that were added/modified: [List if any]
+- Unexpected challenges: [List if any]
+
+**PR Summary:**
+
+- PR URL: {{pr_url}}
+- Files changed: [Count from implementation summary]
+- Test coverage: {{coverage_percentage}}
+
+**Implementation Quality:**
+
+- Validation status: [All checks passed vs issues found]
+- Refactoring done: [Any significant refactoring during implementation]
+
+**Notes for Future:**
+[Any insights that would be helpful for similar implementations in the future]
+
+**Calibration for Future Tech Specs:**
+[Lessons learned that would help create better tech specs in the future - what was missed, what was over-specified]
+
+---
+
+</action>
+
+<action>Confirm to user in {communication_language}:
+
+✅ Session learnings saved to agent memory
+
+This helps Dev Agent provide better assistance in future sessions by:
+
+- Remembering your coding preferences
+- Understanding project patterns
+- Improving implementation quality
+- Calibrating future tech spec estimates
+
+Memory file: bmad/sdd/agents/dev-agent-sidecar/memories.md
+</action>
+</step>
+
 </workflow>
