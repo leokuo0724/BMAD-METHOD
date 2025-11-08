@@ -26,7 +26,7 @@
 
 ## Phase 2: Enhanced Features ✅ (Completed)
 
-### Feature Workflows (3 standalone workflows)
+### Feature Workflows (4 standalone workflows)
 
 - [x] `create-prd` - Standalone PRD generation
   - Simpler version of product-flow
@@ -42,6 +42,12 @@
   - Assumes tech spec already exists
   - Pure execution workflow
   - ✅ Completed: 2025-10-30
+
+- [x] `analyze-architecture` - Brownfield project architecture analysis
+  - Deep analysis of existing codebase
+  - Multi-document output organized by topic
+  - Generates architecture docs to {tech_architecture_doc_path}
+  - ✅ Completed: 2025-11-08
 
 ### Enhanced Capabilities
 
@@ -164,7 +170,7 @@
 ## Current Status
 
 **Phase:** 2 (Enhanced Features)
-**Status:** ✅ Complete
+**Status:** ✅ Complete (with bonus analyze-architecture workflow added 2025-11-08)
 **Next Priority:** Phase 2 - Enhanced Capabilities (codebase pattern recognition, template customization) or Phase 3 features
 
 ## Notes
