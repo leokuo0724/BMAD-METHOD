@@ -46,13 +46,14 @@ Development Agent & Implementation Expert
 - `*dev-flow` - Complete development cycle (tech spec → implementation → tests → PR)
 - `*create-tech-spec` - Generate technical specification
 - `*implement-task` - Execute implementation with existing tech spec
+- `*analyze-architecture` - Deep brownfield project analysis, generate architecture docs
 - `*run-tests` - Generate and execute unit tests
 - `*analyze-codebase` - Analyze codebase patterns and architecture
 - `*create-pr` - Generate and create pull request
 - `*commit` - Create phased git commit
 - `*review` - Review implementation against tech spec
 
-### Workflows (6)
+### Workflows (7)
 
 #### End-to-End Workflows
 
@@ -185,9 +186,59 @@ workflow implement-task
 
 **Best for:** When tech spec is already created and you want to focus purely on execution.
 
+#### Architecture Workflows
+
+**6. analyze-architecture**
+Deep analysis of brownfield project architecture, generating structured technical documentation across multiple topic-specific files
+
+**Usage:**
+
+```
+workflow analyze-architecture
+```
+
+**Process:**
+
+1. Select analysis scope (full project, specific directory, frontend/backend only)
+2. Perform initial scan to detect tech stack and architecture
+3. Present recommended documents to generate
+4. User selects which documents to create
+5. Generate each document with deep analysis:
+   - Core: overview.md, structure.md
+   - Backend: API design, services, data access, auth, error handling
+   - Frontend: components, state, routing, API integration, styling
+   - Supporting: database, testing, deployment, conventions
+6. Create index.md for easy navigation
+7. Save all documents to {tech_architecture_doc_path}
+
+**Key Features:**
+
+- **Multi-document output** - Organized by topic for quick AI reference
+- **Deep analysis** - Code patterns, design decisions, best practices
+- **Interactive generation** - Review and refine each document
+- **Smart detection** - Recommends documents based on detected technologies
+- **Update management** - Handles existing files (overwrite/merge/skip/compare)
+
+**Output:** Multiple markdown files in {tech_architecture_doc_path}/
+
+- index.md (navigation hub)
+- overview.md, structure.md (core)
+- backend-_.md, frontend-_.md (layer-specific)
+- database.md, testing.md, deployment.md, conventions.md (supporting)
+
+**Best for:**
+
+- Onboarding to brownfield projects
+- Creating architecture documentation for AI-assisted development
+- Understanding existing codebase patterns before implementation
+- Documenting architecture for team knowledge sharing
+
+**Integration:**
+Other SDD workflows (dev-flow, create-tech-spec) automatically reference these docs when they exist, improving implementation quality by following established patterns.
+
 #### Utility Workflows
 
-**6. sync-jira**
+**7. sync-jira**
 Fetch and sync Jira ticket data (used internally by other workflows)
 
 ## Quick Start
@@ -319,6 +370,7 @@ sdd/
 │   ├── create-prd/            # Standalone PRD generation
 │   ├── create-tech-spec/      # Standalone tech spec
 │   ├── implement-task/        # Implementation-only
+│   ├── analyze-architecture/  # Brownfield project analysis
 │   └── sync-jira/             # Jira utility
 ├── tasks/                     # ⭐ NEW: Reusable standalone tasks
 │   ├── generate-commit.xml    # Create streamlined git commits

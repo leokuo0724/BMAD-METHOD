@@ -58,6 +58,10 @@ agent:
       workflow: "bmad/sdd/workflows/implement-task/workflow.yaml"
       description: "Execute implementation when tech spec already exists"
 
+    - trigger: analyze-architecture
+      workflow: "bmad/sdd/workflows/analyze-architecture/workflow.yaml"
+      description: "Deep analysis of brownfield project, generating structured architecture documentation"
+
     - trigger: run-tests
       action: |
         I'll generate and execute unit tests for your implementation.
