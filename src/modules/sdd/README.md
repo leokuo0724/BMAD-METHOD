@@ -63,8 +63,15 @@ Transform product requirements into structured PRD with Epic/Story/Task breakdow
 **Usage:**
 
 ```
+# Recommended: Through PM Agent
+Load pm-agent
+*create-prd
+
+# Alternative: Direct execution (auto-loads PM Agent)
 workflow product-flow
 ```
+
+**Note:** Direct execution will automatically invoke PM Agent, which performs configuration validation and provides professional PM guidance throughout the workflow.
 
 **Process:**
 
@@ -92,8 +99,15 @@ Complete development cycle from Jira task to pull request (planning + implementa
 **Usage:**
 
 ```
+# Recommended: Through Dev Agent
+Load dev-agent
+*dev-flow
+
+# Alternative: Direct execution (auto-loads Dev Agent)
 workflow dev-flow
 ```
+
+**Note:** Direct execution will automatically invoke Dev Agent, which performs comprehensive configuration validation (6 configs) and provides professional engineering guidance throughout the workflow.
 
 **Process:**
 

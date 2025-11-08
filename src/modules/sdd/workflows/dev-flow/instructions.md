@@ -6,6 +6,10 @@
 
 <workflow>
 
+<step n="0" goal="Ensure Dev Agent is loaded">
+<invoke-agent>{project-root}/bmad/sdd/agents/dev-agent.md</invoke-agent>
+</step>
+
 <step n="1" goal="Fetch Jira task details">
 <ask>Please provide the Jira task number (e.g., FIS-00002):</ask>
 
