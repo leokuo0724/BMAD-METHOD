@@ -6,6 +6,10 @@
 
 <workflow>
 
+<step n="0" goal="Ensure PM Agent is loaded">
+<invoke-agent>{project-root}/bmad/sdd/agents/pm-agent.md</invoke-agent>
+</step>
+
 <step n="1" goal="Welcome and determine input method">
 <action>Welcome {user_name} to the Product Flow workflow</action>
 

@@ -62,6 +62,7 @@
           <tag>ask xml tag → Prompt user and WAIT for response</tag>
           <tag>invoke-workflow xml tag → Execute another workflow with given inputs</tag>
           <tag>invoke-task xml tag → Execute specified task</tag>
+          <tag>invoke-agent - Call an agent</tag>
           <tag>invoke-protocol name="protocol_name" xml tag → Execute reusable protocol from protocols section</tag>
           <tag>goto step="x" → Jump to specified step</tag>
         </execute-tags>
@@ -128,6 +129,7 @@
       <tag>goto - Jump to another step</tag>
       <tag>invoke-workflow - Call another workflow</tag>
       <tag>invoke-task - Call a task</tag>
+      <tag>invoke-agent - Call an agent</tag>
       <tag>invoke-protocol - Execute a reusable protocol (e.g., discover_inputs)</tag>
     </execution>
     <output>
