@@ -32,12 +32,19 @@ async function installModule(config) {
     // Step 5: Validate Jira configuration
     await validateJiraConfig(config);
 
+    // Step 6: Register standalone tasks
+    await registerStandaloneTasks(config);
+
     console.log('✅ SDD module installed successfully!');
     console.log('');
     console.log('📋 Next steps:');
     console.log('   1. Ensure your .env file contains Jira credentials');
     console.log('   2. Load pm-agent to start product workflows');
     console.log('   3. Load dev-agent to start development workflows');
+    console.log('');
+    console.log('🔧 Standalone commands available:');
+    console.log('   - /generate-commit - Create git commits following SDD format');
+    console.log('   - /create-pr - Create pull requests following SDD format');
 
     return {
       success: true,
@@ -225,14 +232,83 @@ async function validateJiraConfig(config) {
 }
 
 /**
+ * Register standalone tasks as slash commands
+ * Creates command files in .claude/commands/ for direct invocation
+ */
+async function registerStandaloneTasks(config) {
+  console.log('   Registering standalone tasks...');
+
+  const projectRoot = config.project_root;
+  const commandsDir = path.join(projectRoot, '.claude', 'commands');
+
+  // Ensure .claude/commands directory exists
+  if (!fs.existsSync(commandsDir)) {
+    fs.mkdirSync(commandsDir, { recursive: true });
+    console.log('   ✓ Created .claude/commands directory');
+  }
+
+  // Define standalone tasks to register
+  const standaloneTasks = [
+    {
+      name: 'generate-commit',
+      taskPath: 'bmad/sdd/tasks/generate-commit.xml',
+      description: 'Create git commits following SDD streamlined format',
+    },
+    {
+      name: 'create-pr',
+      taskPath: 'bmad/sdd/tasks/create-pr.xml',
+      description: 'Create pull requests following SDD streamlined format',
+    },
+  ];
+
+  for (const task of standaloneTasks) {
+    const commandFilePath = path.join(commandsDir, `${task.name}.md`);
+
+    // Create command file content
+    const commandContent = `---
+name: ${task.name}
+description: ${task.description}
+---
+
+Execute the SDD standalone task: ${task.name}
+
+<invoke-task path="{project-root}/${task.taskPath}" />
+`;
+
+    try {
+      fs.writeFileSync(commandFilePath, commandContent, 'utf8');
+      console.log(`   ✓ Registered /${task.name} command`);
+    } catch (error) {
+      console.warn(`   ⚠️  Failed to register /${task.name}: ${error.message}`);
+    }
+  }
+
+  console.log('   ✓ Standalone tasks registered');
+}
+
+/**
  * Uninstall the module (cleanup)
  */
-async function uninstallModule() {
+async function uninstallModule(config) {
   console.log('🗑️  Uninstalling Spec-Driven Development module...');
 
   try {
     console.log('   Note: Document directories will be preserved');
     console.log('   You can manually delete them if needed');
+
+    // Remove standalone task commands
+    if (config && config.project_root) {
+      const commandsDir = path.join(config.project_root, '.claude', 'commands');
+      const standaloneTasks = ['generate-commit', 'create-pr'];
+
+      for (const taskName of standaloneTasks) {
+        const commandFilePath = path.join(commandsDir, `${taskName}.md`);
+        if (fs.existsSync(commandFilePath)) {
+          fs.unlinkSync(commandFilePath);
+          console.log(`   ✓ Removed /${taskName} command`);
+        }
+      }
+    }
 
     console.log('✅ Module uninstalled successfully');
     return { success: true };

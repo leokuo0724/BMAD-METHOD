@@ -371,7 +371,9 @@ src/modules/sdd/agents/
 
 ## Standalone Tasks
 
-SDD provides reusable tasks that can be invoked independently in Claude Code or other environments.
+SDD provides **truly standalone** reusable tasks that can be invoked independently in Claude Code or other environments - **no SDD module installation required**!
+
+These tasks automatically detect if the SDD module is installed and will use your custom templates if available, otherwise they fall back to built-in defaults.
 
 ### generate-commit
 
@@ -382,6 +384,13 @@ Create a streamlined git commit following SDD conventions.
 ```
 /generate-commit
 ```
+
+**Standalone Feature:**
+
+✅ Works WITHOUT SDD module installation
+✅ Auto-detects SDD module config if available
+✅ Falls back to built-in format if not installed
+✅ Uses custom commit template from `bmad/sdd/config.yaml` when available
 
 **Features:**
 
@@ -413,6 +422,13 @@ Create a streamlined pull request following SDD conventions.
 /create-pr
 ```
 
+**Standalone Feature:**
+
+✅ Works WITHOUT SDD module installation
+✅ Auto-detects SDD module config if available
+✅ Falls back to built-in format if not installed
+✅ Uses custom PR template from `bmad/sdd/config.yaml` when available
+
 **Features:**
 
 - Checks GitHub CLI (gh) availability and auth
@@ -435,12 +451,31 @@ Create a streamlined pull request following SDD conventions.
 > PR created: https://github.com/org/repo/pull/456
 ```
 
+### Installation Options
+
+**Option 1: Use Without Installation (Standalone)**
+
+These tasks work immediately after SDD module installation registers them. They use built-in defaults and don't require any configuration.
+
+**Option 2: Install SDD Module for Custom Templates**
+
+```bash
+bmad install sdd
+```
+
+When the full module is installed, these tasks will automatically use your custom templates from `bmad/sdd/config.yaml`:
+
+- Custom commit message format
+- Custom PR template
+- Jira integration settings
+
 **When to Use Tasks:**
 
 - **generate-commit**: When you want to create commits manually outside of dev-flow
 - **create-pr**: When you have commits ready but didn't use dev-flow
 - **Quick commits**: During exploratory coding or bug fixes
 - **Flexibility**: When you need more control than workflow automation provides
+- **Standalone usage**: When you only need commit/PR formatting without full SDD workflows
 
 ## Module Structure
 
@@ -459,9 +494,9 @@ sdd/
 │   ├── implement-task/        # Implementation-only
 │   ├── analyze-architecture/  # Brownfield project analysis
 │   └── sync-jira/             # Jira utility
-├── tasks/                     # ⭐ NEW: Reusable standalone tasks
-│   ├── generate-commit.xml    # Create streamlined git commits
-│   └── create-pr.xml          # Create streamlined pull requests
+├── tasks/                     # ⭐ Reusable STANDALONE tasks
+│   ├── generate-commit.xml    # Create streamlined git commits (standalone="true")
+│   └── create-pr.xml          # Create streamlined pull requests (standalone="true")
 ├── templates/
 │   ├── commit/
 │   ├── pr/

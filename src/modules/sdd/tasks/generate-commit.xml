@@ -1,8 +1,16 @@
-<task id="bmad/sdd/tasks/generate-commit.xml" name="Generate Commit">
+<task id="bmad/sdd/tasks/generate-commit.xml" name="Generate Commit" standalone="true">
   <objective>Generate and create a concise git commit following SDD streamlined commit format</objective>
 
+  <config>
+    <!-- Standalone task - will attempt to load SDD module config, fallback to defaults if not available -->
+    <variable name="commit_msg_template_path"
+              default="{task-root}/../../templates/commit/template.md"
+              description="Path to commit message template"/>
+  </config>
+
   <llm critical="true">
-    <mandate>Load user's custom commit template from {commit_msg_template_path} if available, otherwise use default template</mandate>
+    <mandate>This task can run standalone without SDD module installation</mandate>
+    <mandate>Load user's custom commit template from {commit_msg_template_path} if available, otherwise use built-in default template</mandate>
     <mandate>Keep commit messages concise - subject line under 50 characters</mandate>
     <mandate>Always include Jira reference if working on a Jira task</mandate>
     <mandate>Execute ALL steps in exact order</mandate>
@@ -57,24 +65,39 @@ Describe in imperative mood (e.g., "add", "fix", "update", "refactor")</ask>
     </step>
 
     <step n="4" title="Load commit message template">
-      <action>Check if custom commit template exists at {commit_msg_template_path}</action>
+      <action>Attempt to load SDD module config from {project-root}/bmad/sdd/config.yaml</action>
 
-      <check if="custom template file exists">
-        <action>Read the complete template file from {commit_msg_template_path}</action>
-        <action>Store template content and format guidelines as {{commit_template}}</action>
-        <action>Inform user: "Using custom commit template from {commit_msg_template_path}"</action>
+      <check if="SDD module is installed">
+        <action>Load commit_msg_template_path from config.yaml</action>
+        <action>Check if custom commit template exists at loaded path</action>
+
+        <check if="custom template file exists">
+          <action>Read the complete template file from the config path</action>
+          <action>Store template content and format guidelines as {{commit_template}}</action>
+          <action>Inform user: "Using custom commit template from SDD module config"</action>
+        </check>
       </check>
 
-      <check if="custom template does not exist or path is empty">
-        <action>Use default streamlined format:
+      <check if="SDD module not installed OR template not found">
+        <action>Check if template exists at default path: {commit_msg_template_path}</action>
+
+        <check if="default template file exists">
+          <action>Read the complete template file from {commit_msg_template_path}</action>
+          <action>Store template content as {{commit_template}}</action>
+          <action>Inform user: "Using default commit template"</action>
+        </check>
+
+        <check if="else">
+          <action>Use built-in streamlined format:
 ```
 <type>: <brief description>
 
 Jira: <PROJ-NUM>
 ```
-        </action>
-        <action>Store default format as {{commit_template}}</action>
-        <action>Inform user: "Using default SDD commit template"</action>
+          </action>
+          <action>Store default format as {{commit_template}}</action>
+          <action>Inform user: "Using built-in SDD commit format (no template file found)"</action>
+        </check>
       </check>
     </step>
 
@@ -171,8 +194,10 @@ Select [1/2]:</ask>
   </validation>
 
   <llm final="true">
-    <mandate>This task provides a standalone way to create commits following SDD conventions</mandate>
-    <mandate>Can be used independently or called from workflows</mandate>
-    <mandate>Maintains consistency with dev-flow commit strategy</mandate>
+    <mandate>This task is STANDALONE - can run without SDD module installation</mandate>
+    <mandate>Automatically detects and uses SDD module config if available</mandate>
+    <mandate>Falls back to built-in defaults if module not installed</mandate>
+    <mandate>Can be used independently via /generate-commit or called from workflows</mandate>
+    <mandate>Maintains consistency with dev-flow commit strategy when used within SDD module</mandate>
   </llm>
 </task>
