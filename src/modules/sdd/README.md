@@ -126,6 +126,10 @@ workflow dev-flow
 - Auto-proceed after Jira fetch (no manual confirmation)
 - Codebase context analysis saved in tech spec document
 - **Flexible commit strategy**: Choose between auto-commit per phase or manual control
+- **Smart auto-commit behavior**:
+  - ✅ Auto-commits during phase-by-phase implementation (concise messages under 50 chars)
+  - ⚠️ Auto-commit **disabled** after implementation review - manual control for post-implementation adjustments
+  - Use `/generate-commit` for manual commits when needed
 - **AI implementation tracking**: Tech spec shows which phases were AI-implemented
 - **Streamlined commits**: Concise commit messages (under 50 chars) with Jira reference
 - **Streamlined PRs**: Focused PR descriptions without verbose details
