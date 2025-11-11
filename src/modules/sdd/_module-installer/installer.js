@@ -26,7 +26,10 @@ async function installModule(config) {
     // Step 3: Setup templates
     await setupTemplates(config);
 
-    // Step 4: Validate Jira configuration
+    // Step 4: Setup agent sidecars
+    await setupAgentSidecars(config);
+
+    // Step 5: Validate Jira configuration
     await validateJiraConfig(config);
 
     console.log('✅ SDD module installed successfully!');
@@ -132,6 +135,66 @@ async function setupTemplates(config) {
   } else {
     console.warn('   ⚠️  Some templates are missing - workflows may not work correctly');
   }
+}
+
+/**
+ * Setup agent sidecar directories
+ * Sidecar system provides persistent memory and knowledge for agents
+ */
+async function setupAgentSidecars(config) {
+  console.log('   Setting up agent sidecar systems...');
+
+  const moduleRoot = path.join(config.project_root, 'bmad', 'sdd');
+  const agentsDir = path.join(moduleRoot, 'agents');
+
+  // Ensure agents directory exists
+  if (!fs.existsSync(agentsDir)) {
+    console.warn('   ⚠️  Agents directory not found - skipping sidecar setup');
+    return;
+  }
+
+  // Define sidecars that need to be set up
+  const sidecars = ['pm-agent-sidecar', 'dev-agent-sidecar'];
+
+  for (const sidecar of sidecars) {
+    const sidecarPath = path.join(agentsDir, sidecar);
+
+    if (fs.existsSync(sidecarPath)) {
+      // Verify sidecar structure
+      const requiredFiles = ['instructions.md', 'memories.md'];
+      let sidecarComplete = true;
+
+      for (const file of requiredFiles) {
+        const filePath = path.join(sidecarPath, file);
+        if (!fs.existsSync(filePath)) {
+          console.warn(`   ⚠️  ${sidecar}/${file} missing`);
+          sidecarComplete = false;
+        }
+      }
+
+      // Create knowledge directory if it doesn't exist
+      const knowledgeDir = path.join(sidecarPath, 'knowledge');
+      if (!fs.existsSync(knowledgeDir)) {
+        fs.mkdirSync(knowledgeDir, { recursive: true });
+        console.log(`   ✓ Created ${sidecar}/knowledge directory`);
+      }
+
+      // Create sessions directory if it doesn't exist (for future use)
+      const sessionsDir = path.join(sidecarPath, 'sessions');
+      if (!fs.existsSync(sessionsDir)) {
+        fs.mkdirSync(sessionsDir, { recursive: true });
+        console.log(`   ✓ Created ${sidecar}/sessions directory`);
+      }
+
+      if (sidecarComplete) {
+        console.log(`   ✓ ${sidecar} is ready`);
+      }
+    } else {
+      console.warn(`   ⚠️  ${sidecar} directory not found - agent may not have persistent memory`);
+    }
+  }
+
+  console.log('   ✓ Agent sidecar systems configured');
 }
 
 /**
