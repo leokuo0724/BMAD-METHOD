@@ -178,9 +178,10 @@ Select [1/2/3]:</ask>
   <ask>What adjustments are needed?</ask>
   <action>Make the requested changes</action>
 
+<action>Inform user: "⚠️ Post-implementation adjustments detected. Auto-commit is disabled for manual control. Please use /generate-commit when ready to commit your changes."</action>
+
   <check if="commit_strategy == auto">
-    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
-    <action>Create adjustment commit following the loaded template format</action>
+    <action>Note: Auto-commit is intentionally disabled after step 4 implementation review to give you full control over post-implementation changes. You can commit manually when satisfied.</action>
   </check>
 
 <goto step="4">Return to review</goto>
@@ -192,9 +193,10 @@ Select [1/2/3]:</ask>
   <action>Update tech spec with new phase</action>
   <action>Add to {{implementation_summary}}</action>
 
+<action>Inform user: "⚠️ Additional phase added after implementation review. Auto-commit is disabled for manual control. Please use /generate-commit when ready to commit your changes."</action>
+
   <check if="commit_strategy == auto">
-    <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
-    <action>Create commit for new phase following the loaded template format</action>
+    <action>Note: Auto-commit is intentionally disabled for post-implementation phases to give you full control. You can commit manually when satisfied.</action>
   </check>
 
 <goto step="4">Return to review</goto>
@@ -254,9 +256,10 @@ Select [1/2/3]:</ask>
   <check if="user says yes">
     <action>Fix validation errors</action>
 
+    <action>Inform user: "⚠️  Validation fixes applied. Auto-commit is disabled - please use /generate-commit when ready."</action>
+
     <check if="commit_strategy == auto">
-      <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
-      <action>Create cleanup commit following the loaded template format</action>
+      <action>Note: Auto-commit is intentionally disabled for validation fixes to give you full control. You can commit manually when satisfied.</action>
     </check>
 
   </check>
@@ -276,7 +279,14 @@ Select [1/2/3]:</ask>
 <check if="user says adjust">
   <ask>What needs adjustment?</ask>
   <action>Make the adjustments</action>
-  <goto step="6">Return to final review</goto>
+
+<action>Inform user: "⚠️ Final adjustments applied. Auto-commit is disabled - please use /generate-commit when ready."</action>
+
+  <check if="commit_strategy == auto">
+    <action>Note: Auto-commit is intentionally disabled for final adjustments to give you full control. You can commit manually when satisfied.</action>
+  </check>
+
+<goto step="6">Return to final review</goto>
 </check>
 
 <template-output>final_review</template-output>
