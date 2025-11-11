@@ -130,6 +130,11 @@ workflow dev-flow
   - ✅ Auto-commits during phase-by-phase implementation (concise messages under 50 chars)
   - ⚠️ Auto-commit **disabled** after implementation review - manual control for post-implementation adjustments
   - Use `/generate-commit` for manual commits when needed
+- **Manual commit strategy**:
+  - 📝 Pauses after each phase completion for review
+  - Prompts user to commit before continuing to next phase
+  - Can skip commits and commit later before PR
+  - Integrates with `/generate-commit` standalone task
 - **AI implementation tracking**: Tech spec shows which phases were AI-implemented
 - **Streamlined commits**: Concise commit messages (under 50 chars) with Jira reference
 - **Streamlined PRs**: Focused PR descriptions without verbose details
