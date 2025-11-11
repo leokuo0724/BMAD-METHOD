@@ -109,7 +109,32 @@ Check if custom template exists at {commit_msg_template_path}:
   </check>
 
 <check if="commit_strategy == manual">
-  <action>Inform user: "Phase {{phase_number}} implementation complete. Files ready for commit (manual strategy selected)."</action>
+  <action>Inform user: "✅ Phase {{phase_number}} implementation complete. Files ready for commit (manual strategy selected)."</action>
+
+<ask>📝 Manual Commit Strategy Active
+
+You selected manual commit control. Please review the changes and create a commit before proceeding.
+
+**Suggested workflow:**
+
+1. Review the files changed in this phase
+2. Use `/generate-commit` to create a commit for this phase
+3. Return here to continue
+
+Have you committed the changes for this phase? [yes/not-yet/skip]</ask>
+
+  <check if="user says not-yet">
+    <action>Wait for user to commit. When ready, select 'yes' above.</action>
+    <goto step="3">Return to commit check</goto>
+  </check>
+
+  <check if="user says skip">
+    <action>Note: Skipping commit for this phase. You can commit manually later before creating PR.</action>
+  </check>
+</check>
+
+<check if="commit_strategy == auto">
+  <action>Phase {{phase_number}} committed automatically.</action>
 </check>
 
 <action>Update tech spec with phase completion status</action>
