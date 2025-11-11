@@ -1,8 +1,16 @@
-<task id="bmad/sdd/tasks/create-pr.xml" name="Create Pull Request">
+<task id="bmad/sdd/tasks/create-pr.xml" name="Create Pull Request" standalone="true">
   <objective>Generate and create a streamlined pull request following SDD PR format conventions</objective>
 
+  <config>
+    <!-- Standalone task - will attempt to load SDD module config, fallback to defaults if not available -->
+    <variable name="pr_template_path"
+              default="{task-root}/../../templates/pr/template.md"
+              description="Path to pull request template"/>
+  </config>
+
   <llm critical="true">
-    <mandate>Load user's custom PR template from {pr_template_path} if available, otherwise use default template</mandate>
+    <mandate>This task can run standalone without SDD module installation</mandate>
+    <mandate>Load user's custom PR template from {pr_template_path} if available, otherwise use built-in default template</mandate>
     <mandate>Keep PR descriptions concise and focused on essentials</mandate>
     <mandate>Avoid verbose technical explanations - link to tech spec instead</mandate>
     <mandate>Execute ALL steps in exact order</mandate>
@@ -173,18 +181,33 @@ If yes, provide the path or URL to the tech spec:</ask>
     </step>
 
     <step n="7" title="Load PR template">
-      <action>Check if custom PR template exists at {pr_template_path}</action>
+      <action>Attempt to load SDD module config from {project-root}/bmad/sdd/config.yaml</action>
 
-      <check if="custom template file exists">
-        <action>Read the complete template file from {pr_template_path}</action>
-        <action>Store template content and structure as {{pr_template}}</action>
-        <action>Inform user: "Using custom PR template from {pr_template_path}"</action>
+      <check if="SDD module is installed">
+        <action>Load pr_template_path from config.yaml</action>
+        <action>Check if custom PR template exists at loaded path</action>
+
+        <check if="custom template file exists">
+          <action>Read the complete template file from the config path</action>
+          <action>Store template content and structure as {{pr_template}}</action>
+          <action>Inform user: "Using custom PR template from SDD module config"</action>
+        </check>
       </check>
 
-      <check if="custom template does not exist or path is empty">
-        <action>Use default streamlined format with sections: Summary, Jira, Tech Spec, Key Changes, Testing, Notes</action>
-        <action>Store default format as {{pr_template}}</action>
-        <action>Inform user: "Using default SDD PR template"</action>
+      <check if="SDD module not installed OR template not found">
+        <action>Check if template exists at default path: {pr_template_path}</action>
+
+        <check if="default template file exists">
+          <action>Read the complete template file from {pr_template_path}</action>
+          <action>Store template content as {{pr_template}}</action>
+          <action>Inform user: "Using default PR template"</action>
+        </check>
+
+        <check if="else">
+          <action>Use built-in streamlined format with sections: Summary, Jira, Tech Spec, Key Changes, Testing, Notes</action>
+          <action>Store default format as {{pr_template}}</action>
+          <action>Inform user: "Using built-in SDD PR format (no template file found)"</action>
+        </check>
       </check>
     </step>
 
@@ -335,9 +358,11 @@ Select [1/2/3]:</ask>
   </error-handling>
 
   <llm final="true">
-    <mandate>This task provides a standalone way to create PRs following SDD conventions</mandate>
-    <mandate>Can be used independently or called from workflows</mandate>
-    <mandate>Maintains consistency with dev-flow PR generation</mandate>
+    <mandate>This task is STANDALONE - can run without SDD module installation</mandate>
+    <mandate>Automatically detects and uses SDD module config if available</mandate>
+    <mandate>Falls back to built-in defaults if module not installed</mandate>
+    <mandate>Can be used independently via /create-pr or called from workflows</mandate>
+    <mandate>Maintains consistency with dev-flow PR generation when used within SDD module</mandate>
     <mandate>Focuses on concise, reviewer-friendly PR descriptions</mandate>
   </llm>
 </task>
