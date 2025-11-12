@@ -42,6 +42,17 @@ Example: docs/sdd/tech-spec/tech-spec-FIS-00002-fe-global-search-bar.md</ask>
 <step n="2" goal="Choose commit strategy">
 <action>Update tech spec status to "In Progress" with start timestamp</action>
 
+<action>Initialize Phase Status Tracking table if not already present:
+
+Check if the tech spec has a "Phase Status Tracking" table:
+
+- If table doesn't exist or is empty (only has {{phase_status_table}} placeholder):
+  - Parse the "Task Breakdown" section to extract all phases
+  - Create table rows for each phase with initial status "⏸️ Pending"
+  - Format: | Phase# | Phase Description | ⏸️ Pending | - |
+
+This ensures all phases are tracked from the start of implementation.</action>
+
 <check if="commit_strategy not provided">
   <ask>Choose commit strategy for implementation:
 
@@ -63,6 +74,15 @@ Select [1/2]:</ask>
 <action>For each phase in the tech spec task breakdown:</action>
 
 <action>Inform user: "Starting Phase {{current_phase_number}}: {{phase_description}}"</action>
+
+<action>Update tech spec to mark current phase as "In Progress":
+
+Find the "Phase Status Tracking" table and update Phase {{current_phase_number}}:
+
+- Change Status to "🔄 In Progress"
+- Leave "Completed" column as "-"
+
+This shows which phase is currently being worked on.</action>
 
 <action>Implement the phase following:
 
@@ -137,7 +157,18 @@ Have you committed the changes for this phase? [yes/not-yet/skip]</ask>
   <action>Phase {{phase_number}} committed automatically.</action>
 </check>
 
-<action>Update tech spec with phase completion status</action>
+<action>Update tech spec with phase completion status:
+
+Find the "Phase Status Tracking" table in the tech spec document and update the row for Phase {{phase_number}}:
+
+- Change Status from "⏸️ Pending" or "🔄 In Progress" to "✅ Complete"
+- Add completion timestamp in "Completed" column (format: YYYY-MM-DD HH:MM)
+- Use Edit tool to update the specific table row
+
+Example update:
+| {{phase_number}} | {{phase_description}} | ✅ Complete | {{current_timestamp}} |
+
+This provides real-time visibility into implementation progress directly in the tech spec document.</action>
 
 <ask>Phase completed. Would you like to:
 

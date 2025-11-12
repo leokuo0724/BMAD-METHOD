@@ -255,6 +255,17 @@ Provide a short, descriptive name in kebab-case (e.g., "fe-global-search-bar", "
 
 **Status:** "Planning"</action>
 
+<action>Initialize Phase Status Tracking table:
+
+Parse the "Implementation Phases" section and create a status tracking table:
+
+- Extract each phase number and description
+- Create table row for each phase with initial status "⏸️ Pending"
+- Format: | Phase# | Phase Description | ⏸️ Pending | - |
+- Replace {{phase_status_table}} placeholder in template with actual table rows
+
+This enables real-time phase tracking during implementation.</action>
+
 <action>Ensure all variables in the template are replaced with actual content</action>
 <action>Format the document with proper markdown structure</action>
 <action>Apply consistent formatting (blank lines before/after lists, code blocks)</action>
