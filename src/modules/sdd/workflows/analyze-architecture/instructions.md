@@ -3,842 +3,550 @@
 <critical>The workflow execution engine is governed by: {project-root}/bmad/core/tasks/workflow.xml</critical>
 <critical>You MUST have already loaded and processed: {project-root}/bmad/sdd/workflows/analyze-architecture/workflow.yaml</critical>
 <critical>Communicate all responses in {communication_language}</critical>
+<critical>Content MUST be concise - only include context useful for AI implementation</critical>
 
 <workflow>
 
 <step n="1" goal="Determine analysis scope">
-<ask>What scope would you like to analyze?
+<action>Welcome {user_name} to the Analyze Architecture workflow</action>
 
-1. **Full Project** - Analyze the entire codebase
-2. **Specific Directory** - Analyze a particular directory or module
-3. **Frontend Only** - Focus only on frontend architecture
-4. **Backend Only** - Focus only on backend architecture
+<action>Explain workflow purpose in {communication_language}:
 
-Select option (1-4):</ask>
+This workflow generates focused, concise architecture documentation that helps AI understand your codebase patterns.
 
-<action>Store the user's choice as {{analysis_scope}}</action>
+Key principles:
 
-<check if="analysis_scope == 'specific_directory'">
-<ask>Please provide the path to the directory you want to analyze:</ask>
-<action>Store as {{target_directory}}</action>
-</check>
+- Progressive documentation (analyze what you need, when you need it)
+- Concise content (only patterns and context useful for AI implementation)
+- Flexible structure (organized by layers: fe/, be/, db/, etc.)
+- Easy to extend (add more documentation over time)
 
-<check if="analysis_scope != 'specific_directory'">
-<action>Set {{target_directory}} to project root</action>
-</check>
-</step>
+Documentation will be saved to: {tech_architecture_doc_path}</action>
 
-<step n="2" goal="Perform initial project scan">
-<action>Conduct comprehensive initial scan of the codebase:
+<ask>What would you like to analyze?
 
-**Directory Structure Analysis:**
+1. **Entire Project** - Generate high-level overview of the whole codebase
+2. **Specific Layer** - Focus on frontend, backend, database, or infrastructure
+3. **Specific Implementation** - Analyze a particular component, API, service, or feature
 
-- Scan directory tree to understand project organization
-- Identify main directories (src, lib, app, components, services, etc.)
-- Note depth and organization patterns
-- Identify monorepo vs single-repo structure
+Select [1/2/3]:</ask>
 
-**Technology Stack Detection:**
+<action>Store selection as {{analysis_scope_type}}</action>
 
-- Scan package.json, requirements.txt, go.mod, Gemfile, etc.
-- Identify frameworks (React, Vue, Angular, Express, NestJS, Django, Rails, etc.)
-- Detect build tools (Webpack, Vite, Rollup, etc.)
-- Identify testing frameworks (Jest, Vitest, Pytest, RSpec, etc.)
-- Find database clients/ORMs (Prisma, TypeORM, Sequelize, SQLAlchemy, etc.)
-- Detect state management (Redux, Zustand, MobX, Pinia, etc.)
-- Find CI/CD configurations (.github/workflows, .gitlab-ci.yml, etc.)
-
-**Architecture Pattern Detection:**
-
-- Identify architectural style (MVC, microservices, monolith, serverless, etc.)
-- Detect API style (REST, GraphQL, gRPC, etc.)
-- Find authentication patterns (JWT, sessions, OAuth, etc.)
-- Identify deployment patterns (containers, serverless, traditional, etc.)
-
-**Code Organization Patterns:**
-
-- Identify file naming conventions
-- Detect module organization strategy (feature-based, layer-based, domain-driven)
-- Find code style configurations (.eslintrc, .prettierrc, etc.)
-- Identify testing patterns and coverage tools
-  </action>
-
-<action>Based on the scan results and {{analysis_scope}}, determine which document categories are relevant:
-
-**Always Generate (Core):**
-
-- overview.md
-- structure.md
-
-**Generate if Backend Detected:**
-
-- backend-overview.md
-- backend-api.md (if API endpoints found)
-- backend-services.md (if service layer detected)
-- backend-data-access.md (if ORM/database client found)
-- backend-auth.md (if auth mechanisms detected)
-- backend-error-handling.md
-
-**Generate if Frontend Detected:**
-
-- frontend-overview.md
-- frontend-components.md (if component framework found)
-- frontend-state.md (if state management detected)
-- frontend-routing.md (if routing library found)
-- frontend-api-integration.md (if API client code found)
-- frontend-styling.md (if styling system detected)
-
-**Generate if Applicable:**
-
-- database.md (if database schemas/migrations found)
-- testing.md (if test files found)
-- deployment.md (if CI/CD or deployment configs found)
-- conventions.md (if style guides or linting configs found)
-
-Create a recommended document list based on what was detected.
-</action>
-
-<action>Display scan summary to user in {communication_language}:
-
-Present a clear summary including:
-
-- Detected tech stack
-- Identified frameworks and tools
-- Architectural patterns found
-- Recommended documents to generate (with checkboxes)
-
-Example format:
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 Initial Scan Complete
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Technology Stack Detected:
-✓ Frontend: React 18 + TypeScript + Vite
-✓ Backend: Node.js + Express + TypeScript
-✓ Database: PostgreSQL + Prisma ORM
-✓ Testing: Jest + React Testing Library
-✓ State: Zustand
-✓ CI/CD: GitHub Actions
-
-Recommended Documents:
-□ overview.md - Project overview and tech stack
-□ structure.md - Directory organization and conventions
-□ backend-overview.md - Backend architecture overview
-□ backend-api.md - REST API design patterns
-□ backend-services.md - Service layer organization
-□ backend-data-access.md - Prisma patterns and database access
-□ backend-auth.md - JWT authentication implementation
-□ backend-error-handling.md - Error handling strategies
-□ frontend-overview.md - React application architecture
-□ frontend-components.md - Component design patterns
-□ frontend-state.md - Zustand state management
-□ frontend-routing.md - React Router patterns
-□ frontend-api-integration.md - API client patterns
-□ frontend-styling.md - Tailwind CSS architecture
-□ database.md - PostgreSQL schema and migrations
-□ testing.md - Testing strategy and patterns
-□ deployment.md - CI/CD and deployment process
-□ conventions.md - Code style and best practices
-```
-
-</action>
-
-<ask>Which documents would you like to generate?
+<check if="analysis_scope_type == 2">
+  <ask>Which layer would you like to analyze?
 
 Options:
 
-1. **All Recommended** - Generate all documents listed above
-2. **Custom Selection** - Let me choose specific documents
-3. **Core Only** - Just overview.md and structure.md (fastest)
+- Frontend (fe/)
+- Backend (be/)
+- Database (db/)
+- Infrastructure (infra/)
+- Shared/Utils (shared/)
+- Other (please specify)
 
-Select option (1-3):</ask>
+Enter layer name or choose from options:</ask>
 
-<action>Store user selection as {{document_selection_mode}}</action>
-
-<check if="document_selection_mode == 'custom'">
-<ask>Please list the document names you want to generate (comma-separated or one per line):
-
-Example: overview, structure, backend-api, frontend-components</ask>
-<action>Parse the user's input and store as {{selected_documents}} array</action>
+<action>Store as {{target_layer}}</action>
+<action>Set {{target_directory}} based on layer (e.g., "src/components" for frontend)</action>
 </check>
 
-<check if="document_selection_mode == 'all'">
-<action>Set {{selected_documents}} to include all recommended documents from scan</action>
+<check if="analysis_scope_type == 3">
+  <ask>Please describe the specific implementation you want to analyze:
+
+Examples:
+
+- "Dropdown component"
+- "User authentication API"
+- "Zustand state management"
+- "AG Grid table implementation"
+
+Your description:</ask>
+
+<action>Store as {{specific_implementation}}</action>
+<action>Based on description, infer {{target_layer}} (fe/be/db/etc.) and {{target_directory}}</action>
 </check>
 
-<check if="document_selection_mode == 'core'">
-<action>Set {{selected_documents}} to ['overview', 'structure']</action>
+<check if="analysis_scope_type == 1">
+  <action>Set {{analysis_scope}} = "full_project"</action>
+  <action>Set {{target_directory}} = project root</action>
 </check>
 
-<action>Display final document generation plan to user for confirmation</action>
-
-<template-output>scan_summary</template-output>
+<template-output>scope_selection</template-output>
 </step>
 
-<step n="3" goal="Generate overview.md" if="'overview' in selected_documents">
-<action>Perform deep analysis for project overview:
+<step n="2" goal="Analyze codebase and propose documentation plan">
+<action>Perform targeted codebase analysis based on {{analysis_scope_type}}:
 
-**Technology Stack Deep Dive:**
+**Scan Scope:**
 
-- List all major dependencies with versions
-- Identify core frameworks and their roles
-- Map technology choices to architectural decisions
-- Note any deprecated or outdated dependencies
+- If full_project: Scan entire codebase at high level
+- If specific_layer: Deep scan of {{target_layer}} directory
+- If specific_implementation: Focused scan on {{specific_implementation}} and related files
 
-**High-Level Architecture:**
+**Analysis Focus:**
 
-- Describe overall system architecture (monolith, microservices, etc.)
-- Identify major system components and their relationships
-- Document data flow patterns
-- Describe deployment architecture
+1. Identify files and directories relevant to scope
+2. Detect patterns, conventions, and common utilities
+3. Identify dependencies and libraries used
+4. Analyze code structure and organization
+5. Find related implementations (for grouping decisions)
 
-**Project Structure Philosophy:**
+**Conciseness Filter:**
 
-- Explain the organization strategy (feature-based, layer-based, etc.)
-- Identify design patterns in use
-- Document architectural principles evident in the code
-- Note any architectural debt or inconsistencies
+- Extract ONLY patterns useful for AI implementation
+- Ignore historical context, design discussions, verbose explanations
+- Focus on: patterns, conventions, gotchas, dependencies, key examples</action>
 
-**Key Design Decisions:**
+<action>Identify related implementations and suggest grouping:
 
-- Identify major technical decisions and their rationale (inferred from code)
-- Document trade-offs made
-- Note areas of technical excellence
-- Identify areas for improvement
-  </action>
+**Relatedness Criteria:**
 
-<action>Generate overview.md with the following structure:
+- Share >50% of patterns, hooks, utilities
+- Use same libraries/frameworks
+- Similar API design
+- Part of same feature area
 
-# Project Architecture Overview
+**Grouping Decision:**
 
-**Last Updated:** {date}
-**Analyzed By:** {user_name}
+- MERGE if highly related (>70% shared logic)
+- SEPARATE if different implementations (<50% shared logic)
+- ASK USER if borderline (50-70% shared logic)</action>
 
-## Technology Stack
+<action>Propose documentation structure:
 
-[Comprehensive tech stack listing with versions and purposes]
+**For full_project:**
 
-## System Architecture
+```
+{tech_architecture_doc_path}/
+└── overview.md (high-level architecture + index)
+```
 
-[High-level architecture description with ASCII diagrams if helpful]
+**For specific_layer (e.g., frontend):**
 
-## Project Organization
+```
+{tech_architecture_doc_path}/
+├── overview.md (update index)
+└── fe/
+    ├── coding-convention.md
+    ├── component-dropdown.md
+    └── state-zustand.md
+```
 
-[Organization philosophy and structure]
+**For specific_implementation:**
 
-## Key Design Decisions
+```
+{tech_architecture_doc_path}/
+├── overview.md (update index)
+└── {{layer}}/
+    └── {{suggested_filename}}.md
+```
 
-[Major architectural decisions and rationale]
+Generate suggested filenames based on:
 
-## Architectural Patterns
+- Implementation name (kebab-case)
+- Category prefix if helpful (component-, api-, service-, util-)
+- Descriptive but concise</action>
 
-[Patterns in use throughout the codebase]
+<action>Display analysis summary and documentation plan in {communication_language}:
 
-## Areas for Improvement
+Format:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Analysis Complete - Documentation Plan
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[Identified technical debt or improvement opportunities]
+**Scope:** {{analysis_scope_description}}
+
+**Detected Implementations:**
+✓ Implementation 1 (using Library X)
+✓ Implementation 2 (using Library X)
+✓ Implementation 3 (using Library Y)
+
+**Relatedness Analysis:**
+
+- Implementation 1 & 2: Share 80% logic → SUGGEST MERGE
+- Implementation 3: Independent → SEPARATE
+
+**Proposed Documentation:**
+
+{tech_architecture_doc_path}/
+{{#if update_overview}}
+├── overview.md (will be updated)
+{{/if}}
+└── {{target_layer}}/
+├── {{filename_1}}.md (Implementation 1 + 2 merged)
+└── {{filename_2}}.md (Implementation 3)
+
+**Estimated Content:**
+
+- {{filename_1}}.md: ~150 lines (concise patterns + examples)
+- {{filename_2}}.md: ~100 lines (concise patterns + examples)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 </action>
 
-<action>Save to {tech_architecture_doc_path}/overview.md</action>
-
-<check if="file exists at {tech_architecture_doc_path}/overview.md">
-<ask>The file overview.md already exists. How would you like to proceed?
-
-1. **Overwrite** - Replace with new version (old saved as .backup)
-2. **Merge** - Combine with existing content
-3. **Skip** - Keep existing file
-4. **Compare** - Show differences first
-
-Select option (1-4):</ask>
-
-<action>Handle according to user choice</action>
-</check>
-
-<action>Display generated overview.md content to user</action>
-
-<ask>Does this overview accurately capture the project architecture?
+<ask if="#yolo mode NOT active">Review this documentation plan:
 
 Options:
 
-- **Continue** [c] - Proceed to next document
-- **Refine** [r] - Make adjustments to this document
-- **Edit** [e] - I'll edit it manually
+- [Enter] Confirm and proceed
+- [e] Edit (change filenames, structure, merge/separate decisions)
+- [r] Reanalyze with different scope
 
 Your choice:</ask>
 
-<check if="user_choice == 'refine'">
-<action>Ask user what to refine and regenerate the document section</action>
-<goto step="3">Return to generate overview again</goto>
+<check if="user_choice == 'e'">
+  <ask>What would you like to change?
+
+You can:
+
+1. Rename files (e.g., "rename {{filename_1}} to component-form-controls")
+2. Change structure (e.g., "create subfolder fe/components/")
+3. Split merged files (e.g., "separate Implementation 1 and 2")
+4. Merge separate files (e.g., "merge {{filename_1}} and {{filename_2}}")
+
+Your changes:</ask>
+
+<action>Apply user's changes to documentation plan</action>
+<action>Display updated plan</action>
+<goto step="2">Return to plan confirmation</goto>
 </check>
+
+<check if="user_choice == 'r'">
+  <goto step="1">Return to scope selection</goto>
+</check>
+
+<action>Finalize documentation plan and store as {{documentation_plan}}</action>
+
+<template-output>documentation_plan</template-output>
+</step>
+
+<step n="3" goal="Generate or update overview.md">
+<check if="overview.md exists at {tech_architecture_doc_path}/overview.md">
+  <action>Load existing overview.md</action>
+  <action>Determine update strategy: Add new section or update existing index</action>
+</check>
+
+<check if="overview.md does NOT exist">
+  <action>Plan to create new overview.md with:
+
+# Architecture Documentation
+
+**Last Updated:** {date}
+**Project:** {{project_name}}
+
+## High-Level Architecture
+
+[Concise description - 3-5 paragraphs maximum]
+
+**Tech Stack:**
+
+- Frontend: {{frontend_stack}}
+- Backend: {{backend_stack}}
+- Database: {{database_stack}}
+- Infrastructure: {{infra_stack}}
+
+**Architectural Style:** {{arch_style}} (e.g., monolith, microservices, serverless)
+
+**Key Patterns:**
+
+- {{pattern_1}}
+- {{pattern_2}}
+- {{pattern_3}}
+
+## Documentation Index
+
+{{#each layers}}
+
+### {{layer_name}}
+
+{{#each documents}}
+
+- [{{doc_title}}](./{{layer}}/{{filename}}.md) - {{brief_description}}
+  {{/each}}
+  {{/each}}
+
+## How to Use
+
+**For AI Implementation:**
+Reference relevant docs when implementing features to follow established patterns.
+
+**For Progressive Documentation:**
+Run `workflow analyze-architecture` to add more documentation as needed.
+
+</action>
+</check>
+
+<action>Generate or update overview.md content:
+
+**If creating:** Generate full overview based on analysis
+**If updating:** Add new entries to index section, update "Last Updated" timestamp
+
+Keep content concise - focus on information useful for AI context.</action>
+
+<action>Display overview.md preview to user</action>
+
+<ask if="#yolo mode NOT active">Review overview.md:
+
+[Enter] Save and continue
+[r] Regenerate
+[e] I'll edit manually
+
+Your choice:</ask>
+
+<check if="user_choice == 'r'">
+  <action>Regenerate overview.md with user feedback</action>
+  <goto step="3">Return to overview review</goto>
+</check>
+
+<action>Save overview.md to {tech_architecture_doc_path}/overview.md</action>
 
 <template-output>overview_document</template-output>
 </step>
 
-<step n="4" goal="Generate structure.md" if="'structure' in selected_documents">
-<action>Perform deep directory structure analysis:
+<step n="4" goal="Generate documentation files" repeat="for-each-file-in-plan">
+<action>For each file in {{documentation_plan}}:</action>
 
-**Directory Tree Analysis:**
+<action>Extract target file path: {{file_path}} = {tech_architecture_doc_path}/{{layer}}/{{filename}}.md</action>
 
-- Generate comprehensive directory tree
-- Document purpose of each major directory
-- Identify naming patterns and conventions
-- Note any unusual or non-standard organization
+<check if="file exists at {{file_path}}">
+  <ask if="#yolo mode NOT active">The file {{filename}}.md already exists. How should I proceed?
 
-**Module Organization:**
+1. **Overwrite** - Replace with new content (backup saved as .backup)
+2. **Merge** - Combine new analysis with existing content
+3. **Skip** - Keep existing file unchanged
+4. **Compare** - Show differences first
 
-- Map how features/modules are organized
-- Document shared vs feature-specific code
-- Identify reusable components/utilities
-- Note module dependencies and relationships
+Select [1/2/3/4]:</ask>
 
-**File Naming Conventions:**
+<action if="#yolo mode active">Default to option 1 (Overwrite with backup)</action>
 
-- Identify naming patterns for different file types
-- Document file type conventions (.service.ts, .controller.ts, etc.)
-- Note any inconsistencies
-- Extract implicit naming rules
-
-**Code Organization Patterns:**
-
-- Identify how related files are grouped
-- Document index file patterns
-- Note barrel export patterns
-- Identify code splitting strategies
+  <action if="user selected 4 (Compare)">
+    <action>Generate new content</action>
+    <action>Display side-by-side comparison</action>
+    <ask>After reviewing, select: [1] Overwrite / [2] Merge / [3] Skip</ask>
   </action>
 
-<action>Generate structure.md with the following structure:
+  <check if="user selected 3 (Skip)">
+    <action>Skip this file and continue to next</action>
+    <goto step="4">Next file in plan</goto>
+  </check>
+</check>
 
-# Project Structure and Organization
+<action>Perform deep analysis for {{filename}}:
+
+**Analysis Process:**
+
+1. Scan all files related to this implementation
+2. Extract patterns, conventions, common utilities
+3. Identify key dependencies and libraries
+4. Find gotchas and important notes
+5. Select 1-2 concise code examples
+
+**Content Extraction Focus:**
+✓ Include:
+
+- Coding patterns (how to implement similar features)
+- Common utilities/hooks and usage
+- API conventions (props, function signatures)
+- Gotchas (common pitfalls)
+- Dependencies (libraries used)
+- One concise example (key patterns only)
+
+✗ Exclude:
+
+- Full source code
+- Historical evolution
+- Verbose explanations
+- Multiple redundant examples
+- Design discussions
+
+**Length Target:**
+
+- Simple: 50-100 lines
+- Medium: 100-200 lines
+- Complex: 200-300 lines (consider splitting if larger)
+  </action>
+
+<action>Generate concise documentation with structure:
+
+# {{Document Title}}
 
 **Last Updated:** {date}
-**Analyzed By:** {user_name}
+**Layer:** {{layer}}
+**Related Files:** [Brief list]
 
-## Directory Tree
+## Overview
 
-[Annotated directory tree with explanations]
+[2-3 sentences describing what this is and when to use it]
 
-## Organization Strategy
+## Key Patterns
 
-[How the project is organized and why]
+[Bullet points of important patterns AI should follow]
 
-## Module Structure
+## Dependencies
 
-[How modules/features are structured]
+- Library 1 (purpose)
+- Hook/Utility 1 (usage)
 
-## File Naming Conventions
+## Usage Example
 
-[Documented naming patterns with examples]
+```{{lang}}
+[Concise example showing key patterns - 10-20 lines maximum]
+```
 
-## Common Patterns
+## Gotchas
 
-[Repeated structural patterns throughout the codebase]
+- [Important pitfall or consideration]
+- [Another gotcha]
 
-## Navigation Guide
+## Related Implementations
 
-[How to find different types of code]
+[Links to related docs if applicable]
+
+---
+
+_Generated by analyze-architecture workflow_
 </action>
 
-<action>Save to {tech_architecture_doc_path}/structure.md</action>
+<action>Check content length and conciseness:
 
-<action>Check for existing file and handle according to user preference (overwrite/merge/skip/compare)</action>
+If content >300 lines: WARN user and suggest splitting
+If content has redundancy: Remove duplicates
+If examples are verbose: Simplify to key patterns only</action>
 
-<action>Display generated structure.md content to user</action>
+<action>Display generated content preview (first 50 lines + last 10 lines)</action>
 
-<ask>Is this structure documentation accurate and helpful?
+<ask if="#yolo mode NOT active">Review {{filename}}.md:
 
-Options:
-
-- **Continue** [c] - Proceed to next document
-- **Refine** [r] - Make adjustments
-- **Edit** [e] - I'll edit manually
+[Enter] Save and continue
+[r] Regenerate with different focus
+[e] I'll edit manually
 
 Your choice:</ask>
 
-<check if="user_choice == 'refine'">
-<action>Ask user what to refine and regenerate the document section</action>
-<goto step="4">Return to generate structure again</goto>
+<check if="user_choice == 'r'">
+  <ask>What should I focus on differently?</ask>
+  <action>Regenerate with user guidance</action>
+  <goto step="4">Return to file review</goto>
 </check>
 
-<template-output>structure_document</template-output>
-</step>
+<action>Create directory {tech_architecture_doc_path}/{{layer}}/ if it doesn't exist</action>
 
-<step n="5" goal="Generate backend documentation" for-each="backend_doc in selected_backend_documents">
-<action>For each backend document in {{selected_documents}} that starts with "backend-":
-
-Determine which backend document to generate based on the name:
-
-- backend-overview: Overall backend architecture
-- backend-api: API design and routing patterns
-- backend-services: Service layer organization
-- backend-data-access: Database access patterns
-- backend-auth: Authentication mechanisms
-- backend-error-handling: Error handling patterns
-
-Perform targeted deep analysis for the specific aspect.
-</action>
-
-<action if="backend_doc == 'backend-overview'">
-**Backend Overview Analysis:**
-- Identify backend framework and architecture style
-- Document layers (controller, service, repository, etc.)
-- Map request/response flow
-- Identify middleware and interceptors
-- Document dependency injection patterns
-- Note security implementations
-- Identify logging and monitoring approaches
-
-Generate backend-overview.md with comprehensive backend architecture documentation.
-</action>
-
-<action if="backend_doc == 'backend-api'">
-**API Design Analysis:**
-- Catalog all API endpoints with patterns
-- Document routing structure and organization
-- Identify RESTful conventions or deviations
-- Document API versioning strategy
-- Analyze request/response formats
-- Identify validation patterns
-- Document middleware chain
-- Note rate limiting or throttling
-- Identify CORS and security headers
-
-Generate backend-api.md with detailed API design patterns.
-</action>
-
-<action if="backend_doc == 'backend-services'">
-**Service Layer Analysis:**
-- Identify service organization patterns
-- Document business logic structure
-- Map service dependencies
-- Identify transaction handling patterns
-- Document service composition patterns
-- Note error handling in services
-- Identify caching strategies
-- Document background job patterns
-
-Generate backend-services.md with service layer patterns.
-</action>
-
-<action if="backend_doc == 'backend-data-access'">
-**Data Access Analysis:**
-- Identify ORM/query builder usage patterns
-- Document repository patterns
-- Analyze query optimization techniques
-- Identify connection pooling strategies
-- Document transaction management
-- Note migration patterns
-- Identify seed data approaches
-- Document query building patterns
-
-Generate backend-data-access.md with data access patterns.
-</action>
-
-<action if="backend_doc == 'backend-auth'">
-**Authentication Analysis:**
-- Identify authentication mechanisms (JWT, sessions, OAuth, etc.)
-- Document token generation and validation
-- Analyze authorization patterns (RBAC, ABAC, etc.)
-- Identify permission checking approaches
-- Document password hashing strategies
-- Note refresh token mechanisms
-- Identify session management patterns
-- Document security best practices in use
-
-Generate backend-auth.md with authentication patterns.
-</action>
-
-<action if="backend_doc == 'backend-error-handling'">
-**Error Handling Analysis:**
-- Identify error handling middleware
-- Document error types and hierarchy
-- Analyze error response formats
-- Identify logging strategies for errors
-- Document retry mechanisms
-- Note fallback patterns
-- Identify circuit breaker patterns
-- Document error recovery approaches
-
-Generate backend-error-handling.md with error handling patterns.
-</action>
-
-<action>Save the generated document to {tech_architecture_doc_path}/{backend_doc}.md</action>
-
-<action>Check for existing file and handle according to user preference</action>
-
-<action>Display generated document content to user</action>
-
-<ask>Is this {{backend_doc}} documentation accurate?
-
-Options:
-
-- **Continue** [c] - Proceed to next document
-- **Refine** [r] - Make adjustments
-- **Edit** [e] - I'll edit manually
-
-Your choice:</ask>
-
-<check if="user_choice == 'refine'">
-<action>Ask user what to refine and regenerate the document section</action>
-<goto step="5">Return to generate this backend doc again</goto>
+<check if="user selected 2 (Merge) earlier">
+  <action>Merge new content with existing file:
+  - Keep existing sections that are still relevant
+  - Add new patterns and gotchas
+  - Update code examples if improved
+  - Update "Last Updated" timestamp
+  - Add note: "Merged with updates from {date}"
+  </action>
 </check>
 
-<template-output>{{backend_doc}}\_document</template-output>
+<action>Save file to {{file_path}}</action>
+
+<action if="user selected 1 (Overwrite)">Create backup at {{file_path}}.backup</action>
+
+<action>Confirm file saved: ✓ Saved {{filename}}.md ({{line_count}} lines)</action>
+
+<template-output>{{filename}}\_document</template-output>
 </step>
 
-<step n="6" goal="Generate frontend documentation" for-each="frontend_doc in selected_frontend_documents">
-<action>For each frontend document in {{selected_documents}} that starts with "frontend-":
+<step n="5" goal="Update overview.md index">
+<action>Update overview.md to include new documentation:
 
-Determine which frontend document to generate based on the name:
+1. Add entries to appropriate layer section in index
+2. Update "Last Updated" timestamp
+3. Keep index alphabetically sorted within each layer
+4. Ensure brief descriptions are concise (one line each)</action>
 
-- frontend-overview: Overall frontend architecture
-- frontend-components: Component design patterns
-- frontend-state: State management patterns
-- frontend-routing: Routing architecture
-- frontend-api-integration: API calling patterns
-- frontend-styling: Styling architecture
+<action>Save updated overview.md</action>
 
-Perform targeted deep analysis for the specific aspect.
-</action>
-
-<action if="frontend_doc == 'frontend-overview'">
-**Frontend Overview Analysis:**
-- Identify frontend framework and version
-- Document application structure
-- Map component hierarchy
-- Identify build and bundling setup
-- Document development workflow
-- Note performance optimization techniques
-- Identify accessibility implementations
-- Document browser support strategy
-
-Generate frontend-overview.md with comprehensive frontend architecture documentation.
-</action>
-
-<action if="frontend_doc == 'frontend-components'">
-**Component Design Analysis:**
-- Catalog component types (presentational, container, HOC, etc.)
-- Document component organization patterns
-- Identify component composition patterns
-- Analyze prop patterns and conventions
-- Document component lifecycle usage
-- Identify reusable component patterns
-- Note component library integration
-- Document component testing patterns
-
-Generate frontend-components.md with component design patterns.
-</action>
-
-<action if="frontend_doc == 'frontend-state'">
-**State Management Analysis:**
-- Identify state management solution (Redux, Zustand, Context, MobX, etc.)
-- Document state structure and organization
-- Analyze state update patterns
-- Identify selector patterns
-- Document side effect handling
-- Note state persistence strategies
-- Identify state normalization approaches
-- Document state testing patterns
-
-Generate frontend-state.md with state management patterns.
-</action>
-
-<action if="frontend_doc == 'frontend-routing'">
-**Routing Architecture Analysis:**
-- Identify routing library and patterns
-- Document route structure and organization
-- Analyze route protection patterns
-- Identify navigation patterns
-- Document route parameter handling
-- Note lazy loading strategies
-- Identify nested routing patterns
-- Document route-based code splitting
-
-Generate frontend-routing.md with routing patterns.
-</action>
-
-<action if="frontend_doc == 'frontend-api-integration'">
-**API Integration Analysis:**
-- Identify API client library (axios, fetch, etc.)
-- Document API calling patterns
-- Analyze request/response handling
-- Identify error handling for API calls
-- Document loading state management
-- Note caching strategies
-- Identify retry mechanisms
-- Document API client configuration
-
-Generate frontend-api-integration.md with API integration patterns.
-</action>
-
-<action if="frontend_doc == 'frontend-styling'">
-**Styling Architecture Analysis:**
-- Identify styling solution (CSS Modules, Styled Components, Tailwind, etc.)
-- Document styling organization
-- Analyze theming implementation
-- Identify design system patterns
-- Document responsive design approach
-- Note animation patterns
-- Identify CSS architecture patterns
-- Document styling best practices
-
-Generate frontend-styling.md with styling patterns.
-</action>
-
-<action>Save the generated document to {tech_architecture_doc_path}/{frontend_doc}.md</action>
-
-<action>Check for existing file and handle according to user preference</action>
-
-<action>Display generated document content to user</action>
-
-<ask>Is this {{frontend_doc}} documentation accurate?
-
-Options:
-
-- **Continue** [c] - Proceed to next document
-- **Refine** [r] - Make adjustments
-- **Edit** [e] - I'll edit manually
-
-Your choice:</ask>
-
-<check if="user_choice == 'refine'">
-<action>Ask user what to refine and regenerate the document section</action>
-<goto step="6">Return to generate this frontend doc again</goto>
-</check>
-
-<template-output>{{frontend_doc}}\_document</template-output>
+<template-output>updated_overview</template-output>
 </step>
 
-<step n="7" goal="Generate supporting documentation" for-each="support_doc in selected_supporting_documents">
-<action>For each supporting document in {{selected_documents}} that is one of: database, testing, deployment, conventions:
+<step n="6" goal="Completion summary">
+<action>Display comprehensive summary in {communication_language}:
 
-Perform targeted analysis for the specific aspect.
-</action>
-
-<action if="support_doc == 'database'">
-**Database Architecture Analysis:**
-- Identify database system and version
-- Document schema design patterns
-- Analyze table relationships
-- Identify indexing strategies
-- Document migration patterns
-- Note seed data organization
-- Identify query optimization patterns
-- Document database access patterns
-
-Generate database.md with database architecture documentation.
-</action>
-
-<action if="support_doc == 'testing'">
-**Testing Strategy Analysis:**
-- Identify testing frameworks and tools
-- Document test organization structure
-- Analyze unit testing patterns
-- Identify integration testing approaches
-- Document E2E testing strategy
-- Note mocking and stubbing patterns
-- Identify test data management
-- Document coverage expectations and tools
-
-Generate testing.md with testing strategy documentation.
-</action>
-
-<action if="support_doc == 'deployment'">
-**Deployment Process Analysis:**
-- Identify CI/CD platform and configuration
-- Document build pipeline stages
-- Analyze deployment strategies
-- Identify environment configurations
-- Document infrastructure as code
-- Note containerization patterns
-- Identify secrets management
-- Document monitoring and logging
-
-Generate deployment.md with deployment process documentation.
-</action>
-
-<action if="support_doc == 'conventions'">
-**Code Conventions Analysis:**
-- Identify linting rules and configurations
-- Document formatting standards
-- Analyze naming conventions across codebase
-- Identify code organization principles
-- Document comment and documentation standards
-- Note commit message conventions
-- Identify PR and code review processes
-- Document best practices enforced
-
-Generate conventions.md with code conventions documentation.
-</action>
-
-<action>Save the generated document to {tech_architecture_doc_path}/{support_doc}.md</action>
-
-<action>Check for existing file and handle according to user preference</action>
-
-<action>Display generated document content to user</action>
-
-<ask>Is this {{support_doc}} documentation accurate?
-
-Options:
-
-- **Continue** [c] - Proceed to next document
-- **Refine** [r] - Make adjustments
-- **Edit** [e] - I'll edit manually
-
-Your choice:</ask>
-
-<check if="user_choice == 'refine'">
-<action>Ask user what to refine and regenerate the document section</action>
-<goto step="7">Return to generate this supporting doc again</goto>
-</check>
-
-<template-output>{{support_doc}}\_document</template-output>
-</step>
-
-<step n="8" goal="Generate documentation index">
-<action>Create a comprehensive index.md that serves as the navigation hub for all generated documentation:
-
-# Architecture Documentation Index
-
-**Last Updated:** {date}
-**Project:** [Project Name]
-**Analyzed By:** {user_name}
-
-## Quick Navigation
-
-This documentation is organized by topic for easy reference during implementation.
-
-### Core Documentation
-
-- [Project Overview](./overview.md) - Tech stack, architecture, key decisions
-- [Project Structure](./structure.md) - Directory organization, naming conventions
-
-### Backend Documentation
-
-[List only the backend documents that were generated]
-
-- [Backend Overview](./backend-overview.md) - Backend architecture overview
-- [API Design](./backend-api.md) - REST API patterns and conventions
-- [Service Layer](./backend-services.md) - Business logic organization
-- [Data Access](./backend-data-access.md) - Database access patterns
-- [Authentication](./backend-auth.md) - Auth mechanisms and security
-- [Error Handling](./backend-error-handling.md) - Error handling strategies
-
-### Frontend Documentation
-
-[List only the frontend documents that were generated]
-
-- [Frontend Overview](./frontend-overview.md) - Frontend architecture overview
-- [Components](./frontend-components.md) - Component design patterns
-- [State Management](./frontend-state.md) - State management patterns
-- [Routing](./frontend-routing.md) - Navigation and routing
-- [API Integration](./frontend-api-integration.md) - API calling patterns
-- [Styling](./frontend-styling.md) - Styling architecture
-
-### Supporting Documentation
-
-[List only the supporting documents that were generated]
-
-- [Database](./database.md) - Database schema and patterns
-- [Testing](./testing.md) - Testing strategy and patterns
-- [Deployment](./deployment.md) - CI/CD and deployment
-- [Conventions](./conventions.md) - Code style and best practices
-
-## How to Use This Documentation
-
-**For AI Implementation:**
-
-- Reference relevant documents when implementing features
-- Follow patterns documented in architecture files
-- Consult conventions.md for code style decisions
-
-**For Human Developers:**
-
-- Start with overview.md for project understanding
-- Reference specific docs when working in those areas
-- Use structure.md to navigate the codebase
-
-**For Code Reviews:**
-
-- Verify implementations follow documented patterns
-- Check against conventions.md standards
-- Ensure consistency with architectural decisions
-
-## Updating This Documentation
-
-This documentation should be updated when:
-
-- Major architectural changes occur
-- New patterns are adopted
-- Technology stack changes
-- Significant refactoring happens
-
-To regenerate or update: Run `workflow analyze-architecture`
-</action>
-
-<action>Save to {tech_architecture_doc_path}/index.md</action>
-
-<action>Display the generated index to user</action>
-
-<template-output>index_document</template-output>
-</step>
-
-<step n="9" goal="Completion summary">
-<action>Provide comprehensive completion summary to {user_name} in {communication_language}:
-
-Display:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Architecture Analysis Complete
+✅ Architecture Documentation Complete
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Documentation Generated:**
-[List all generated documents with file paths]
+**Documentation Created/Updated:**
+
+{{#each generated_files}}
+✓ {{layer}}/{{filename}}.md ({{line_count}} lines)
+{{/each}}
 
 **Location:** {tech_architecture_doc_path}
 
-**Documents Created:**
+**Documentation Structure:**
 
-- index.md (navigation hub)
-- overview.md (project overview)
-- structure.md (directory structure)
-  [... list all other generated docs ...]
+```
+{tech_architecture_doc_path}/
+├── overview.md (updated)
+{{#each layers_with_docs}}
+└── {{layer}}/
+    {{#each files}}
+    ├── {{filename}}.md
+    {{/each}}
+{{/each}}
+```
 
-**Total Documents:** [count]
+**Total Files Generated:** {{file_count}}
+**Total Lines:** {{total_lines}} (concise and focused)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Next Steps:**
 
 1. **Review Documentation:**
-   - Open {tech_architecture_doc_path}/index.md for navigation
-   - Verify accuracy of technical details
-   - Add any project-specific notes
+   Open {tech_architecture_doc_path}/overview.md to navigate all docs
 
 2. **Use in Development:**
-   - Reference these docs when implementing features
-   - AI workflows (dev-flow, create-tech-spec) will automatically use these docs
-   - Share with team members for onboarding
+   - dev-flow and create-tech-spec workflows automatically reference these docs
+   - AI will use patterns documented here during implementation
 
-3. **Keep Updated:**
-   - Re-run `workflow analyze-architecture` after major changes
-   - Update manually for architectural decisions
-   - Version control these docs with your code
+3. **Progressive Documentation:**
+   When you encounter new implementations needing documentation:
+
+   ```
+   workflow analyze-architecture
+   → Select "Specific Implementation"
+   → Describe the implementation
+   → Documentation will be added incrementally
+   ```
+
+4. **Share with Team:**
+   - Commit these docs to version control
+   - Team members can use for onboarding
+   - AI-assisted development will be more consistent
 
 **Configuration:**
-The path {tech_architecture_doc_path} is configured in:
-`bmad/sdd/config.yaml`
-
-You can change this path if needed.
+Documentation path is set in: bmad/sdd/config.yaml
+Key: tech_architecture_doc_path = {tech_architecture_doc_path}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 </action>
 
-<action>Suggest next actions:
+<ask>Would you like to:
 
-- Run dev-flow workflow (will now reference architecture docs)
-- Add project-specific notes to the generated docs
-- Share documentation with team
-- Set up automated regeneration on major changes
-  </action>
+1. **Done** - Exit workflow
+2. **Analyze More** - Document another implementation
+3. **View Docs** - Show me the documentation structure
+
+Select [1/2/3]:</ask>
+
+<check if="user selected 2">
+  <goto step="1">Return to scope selection for new analysis</goto>
+</check>
+
+<check if="user selected 3">
+  <action>Display full documentation tree with file sizes</action>
+  <action>Offer to open specific files</action>
+</check>
+
+<action>Thank {user_name} for using analyze-architecture workflow</action>
 
 <template-output>completion_summary</template-output>
 </step>

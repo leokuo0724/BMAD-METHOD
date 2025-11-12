@@ -1,6 +1,6 @@
 # Analyze Architecture Workflow Configuration
 name: analyze-architecture
-description: "Deep analysis of brownfield project architecture, generating structured technical documentation across multiple topic-specific files for AI reference during implementation"
+description: "Progressive architecture documentation workflow - analyze what you need, when you need it. Generates concise, AI-focused documentation organized in fe/, be/, db/, and other layers."
 author: "SDD Module"
 
 # Paths
@@ -19,37 +19,55 @@ date: system-generated
 # SDD-specific configuration
 tech_architecture_doc_path: "{config_source}:tech_architecture_doc_path"
 
-# Architecture analysis configuration
-analysis_scope:
-  - full_project: "Analyze entire project"
-  - specific_directory: "Analyze specific directory or module"
-  - frontend_only: "Analyze frontend layer only"
-  - backend_only: "Analyze backend layer only"
+# Analysis scope options
+analysis_scope_types:
+  - full_project: "Generate high-level overview of entire codebase"
+  - specific_layer: "Focus on frontend, backend, database, or infrastructure layer"
+  - specific_implementation: "Analyze particular component, API, service, or feature"
 
-# Document categories that may be generated
-document_types:
-  core:
-    - overview: "Project overview, tech stack, high-level architecture"
-    - structure: "Directory structure, module organization, naming conventions"
-  backend:
-    - backend-overview: "Backend architecture overview"
-    - backend-api: "API design, routing patterns, middleware"
-    - backend-services: "Service layer, business logic organization"
-    - backend-data-access: "Repository/DAO patterns, ORM usage"
-    - backend-auth: "Authentication and authorization mechanisms"
-    - backend-error-handling: "Error handling patterns and strategies"
-  frontend:
-    - frontend-overview: "Frontend architecture overview"
-    - frontend-components: "Component design patterns, component library"
-    - frontend-state: "State management patterns (Redux/Zustand/Context)"
-    - frontend-routing: "Routing architecture, navigation patterns"
-    - frontend-api-integration: "API calling patterns, data fetching"
-    - frontend-styling: "Styling architecture, theme systems"
-  supporting:
-    - database: "Database schema, relationships, migration strategy"
-    - testing: "Testing strategy, test architecture, coverage conventions"
-    - deployment: "Deployment process, environment config, CI/CD"
-    - conventions: "Code style, naming conventions, best practices"
+# Layer structure (flat by default, user can create subfolders)
+default_layers:
+  - fe: "Frontend"
+  - be: "Backend"
+  - db: "Database"
+  - infra: "Infrastructure"
+  - shared: "Shared utilities and cross-cutting concerns"
+
+# Documentation principles
+documentation_principles:
+  - Progressive: "Document incrementally as needed, not all at once"
+  - Concise: "50-300 lines per file, focus on AI-useful patterns"
+  - Structured: "Organized by layer (fe/, be/, db/), flat by default"
+  - Flexible: "User can modify filenames, structure, merge/split decisions"
+  - Actionable: "Include patterns, conventions, gotchas, dependencies, examples"
+
+# Content guidelines
+content_focus:
+  include:
+    - "Coding patterns and conventions"
+    - "Common utilities and hooks usage"
+    - "API conventions (props, signatures)"
+    - "Gotchas and pitfalls"
+    - "Dependencies and libraries"
+    - "One concise code example per concept"
+  exclude:
+    - "Full source code"
+    - "Historical evolution"
+    - "Verbose explanations"
+    - "Multiple redundant examples"
+    - "Design discussions and debates"
+
+# File length targets
+length_targets:
+  simple: "50-100 lines"
+  medium: "100-200 lines"
+  complex: "200-300 lines (consider splitting if larger)"
+
+# Relatedness thresholds for grouping
+relatedness_thresholds:
+  high: ">70% shared logic → MERGE"
+  medium: "50-70% shared logic → ASK USER"
+  low: "<50% shared logic → SEPARATE"
 
 # Invocation control
 standalone: true
