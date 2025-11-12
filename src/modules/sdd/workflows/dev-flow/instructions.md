@@ -55,6 +55,17 @@
 - **Effort Estimation**: Complexity (Low/Medium/High), Confidence level
 - **Status**: Set to "Planning"</action>
 
+<action>Initialize Phase Status Tracking table:
+
+Parse the "Task Breakdown" section and create a status tracking table:
+
+- Extract each phase number and description
+- Create table row for each phase with initial status "⏸️ Pending"
+- Format: | Phase# | Phase Description | ⏸️ Pending | - |
+- Replace {{phase_status_table}} placeholder in template with actual table rows
+
+This enables real-time phase tracking during implementation.</action>
+
 <action>Save to: {tech_spec_output_file}</action>
 <action>Display the tech spec to {user_name}</action>
 <action>Inform user: "Tech spec generated and saved. Codebase context analysis is included in the document."</action>
