@@ -5,255 +5,187 @@
 - [ ] Configuration file `bmad/sdd/config.yaml` exists
 - [ ] `tech_architecture_doc_path` is configured in config.yaml
 - [ ] Target project/directory for analysis is accessible
-- [ ] User has specified analysis scope clearly
+- [ ] User has specified analysis scope clearly (full project / layer / specific implementation)
 
-## Scan Phase Validation
+## Scope Selection
 
-- [ ] Initial directory scan completed successfully
-- [ ] Technology stack accurately detected
-- [ ] Framework and tool versions identified
-- [ ] Architectural patterns recognized
-- [ ] Document recommendations match detected technologies
-- [ ] User selected documents to generate
+- [ ] User selected appropriate analysis scope
+- [ ] Target layer identified (fe/, be/, db/, infra/, shared/, other)
+- [ ] Specific implementation description provided (if applicable)
+- [ ] Target directory correctly determined
 
-## Core Documentation Quality
+## Analysis Phase
 
-### overview.md
+- [ ] Codebase scan completed for target scope
+- [ ] Patterns and conventions identified
+- [ ] Dependencies and libraries catalogued
+- [ ] Related implementations found and analyzed
+- [ ] Relatedness criteria applied correctly:
+  - [ ] > 70% shared logic → MERGE recommendation
+  - [ ] 50-70% shared logic → ASK USER
+  - [ ] <50% shared logic → SEPARATE recommendation
 
-- [ ] Technology stack section lists all major dependencies with versions
-- [ ] System architecture clearly described with diagrams where applicable
-- [ ] Project organization philosophy explained
-- [ ] Key design decisions documented with rationale
-- [ ] Architectural patterns identified accurately
-- [ ] Areas for improvement noted constructively
-- [ ] No placeholder text or TODO markers remain
-- [ ] Document saved to correct path
+## Documentation Plan
 
-### structure.md
+- [ ] AI proposed documentation structure with filenames
+- [ ] Filenames are descriptive and follow kebab-case
+- [ ] Layer structure is appropriate (fe/, be/, db/, etc.)
+- [ ] Flat structure by default (subfolders only if user requested)
+- [ ] Merge/separate decisions are justified with % shared logic
+- [ ] Estimated content length is reasonable (50-300 lines per file)
+- [ ] User reviewed and confirmed or edited the plan
 
-- [ ] Directory tree accurately represents project
-- [ ] Each major directory has purpose documented
-- [ ] Module organization patterns explained
-- [ ] File naming conventions documented with examples
-- [ ] Code organization patterns identified
-- [ ] Navigation guide is clear and helpful
-- [ ] No placeholder text remains
-- [ ] Document saved to correct path
+## overview.md Generation
 
-## Backend Documentation Quality
+- [ ] High-level architecture description is concise (3-5 paragraphs max)
+- [ ] Tech stack information is accurate and complete
+- [ ] Architectural style identified (monolith, microservices, etc.)
+- [ ] Key patterns documented (top 3-5)
+- [ ] Documentation index includes all generated/planned files
+- [ ] Index organized by layers (fe/, be/, db/, etc.)
+- [ ] "How to Use" section explains progressive documentation
+- [ ] "Last Updated" timestamp is current
+- [ ] Content is concise and focused on AI-useful information
 
-### backend-overview.md (if generated)
+## Generated Documentation Files
 
-- [ ] Backend framework and version identified correctly
-- [ ] Layer architecture (controller/service/repository) documented
-- [ ] Request/response flow explained clearly
-- [ ] Middleware and interceptors documented
-- [ ] Dependency injection patterns identified
-- [ ] Security implementations noted
-- [ ] No generic or placeholder content
+### Structure Validation
 
-### backend-api.md (if generated)
+- [ ] Each file follows standard structure:
+  - [ ] Title and metadata (Last Updated, Layer, Related Files)
+  - [ ] Overview section (2-3 sentences)
+  - [ ] Key Patterns section (bullet points)
+  - [ ] Dependencies section (libraries, hooks, utilities)
+  - [ ] Usage Example (concise, 10-20 lines max)
+  - [ ] Gotchas section (common pitfalls)
+  - [ ] Related Implementations (links to other docs)
+  - [ ] Footer with workflow attribution
 
-- [ ] All major API endpoints cataloged
-- [ ] Routing structure and organization documented
-- [ ] RESTful conventions or deviations noted
-- [ ] API versioning strategy documented
-- [ ] Request/response formats specified
-- [ ] Validation patterns identified
-- [ ] Middleware chain documented
-- [ ] Security headers and CORS configuration noted
+### Content Quality
 
-### backend-services.md (if generated)
+- [ ] Content is concise and focused on AI-useful patterns
+- [ ] Includes: Coding patterns, common utilities, API conventions
+- [ ] Includes: Gotchas, dependencies, concise examples
+- [ ] Excludes: Full source code, historical evolution
+- [ ] Excludes: Verbose explanations, design discussions
+- [ ] Excludes: Multiple redundant examples
+- [ ] Information is actionable for AI implementation
+- [ ] Patterns are clearly explained with sufficient context
 
-- [ ] Service organization patterns documented
-- [ ] Business logic structure explained
-- [ ] Service dependencies mapped
-- [ ] Transaction handling patterns identified
-- [ ] Error handling in services documented
-- [ ] Caching strategies noted
+### Length Targets
 
-### backend-data-access.md (if generated)
+- [ ] Simple implementations: 50-100 lines
+- [ ] Medium complexity: 100-200 lines
+- [ ] Complex implementations: 200-300 lines
+- [ ] Warning given if >300 lines (suggest splitting)
 
-- [ ] ORM/query builder usage patterns documented
-- [ ] Repository patterns identified
-- [ ] Query optimization techniques noted
-- [ ] Transaction management explained
-- [ ] Migration patterns documented
-- [ ] Database connection patterns identified
+### Code Examples
 
-### backend-auth.md (if generated)
+- [ ] Examples are concise (10-20 lines maximum)
+- [ ] Examples demonstrate key patterns only (not full implementation)
+- [ ] Code blocks have proper language tags
+- [ ] Examples are accurate and follow project conventions
 
-- [ ] Authentication mechanisms identified (JWT, sessions, OAuth, etc.)
-- [ ] Token generation and validation documented
-- [ ] Authorization patterns explained (RBAC, ABAC, etc.)
-- [ ] Permission checking approaches documented
-- [ ] Security best practices noted
+## File Management
 
-### backend-error-handling.md (if generated)
-
-- [ ] Error handling middleware documented
-- [ ] Error types and hierarchy explained
-- [ ] Error response formats specified
-- [ ] Logging strategies documented
-- [ ] Retry and fallback patterns identified
-
-## Frontend Documentation Quality
-
-### frontend-overview.md (if generated)
-
-- [ ] Frontend framework and version identified correctly
-- [ ] Application structure documented
-- [ ] Component hierarchy mapped
-- [ ] Build and bundling setup explained
-- [ ] Performance optimizations noted
-- [ ] Browser support strategy documented
-
-### frontend-components.md (if generated)
-
-- [ ] Component types cataloged (presentational, container, etc.)
-- [ ] Component organization patterns documented
-- [ ] Composition patterns identified
-- [ ] Prop patterns and conventions explained
-- [ ] Reusable component patterns noted
-- [ ] Component testing patterns documented
-
-### frontend-state.md (if generated)
-
-- [ ] State management solution identified correctly
-- [ ] State structure and organization documented
-- [ ] State update patterns explained
-- [ ] Selector patterns identified
-- [ ] Side effect handling documented
-- [ ] State persistence strategies noted
-
-### frontend-routing.md (if generated)
-
-- [ ] Routing library identified
-- [ ] Route structure documented
-- [ ] Route protection patterns explained
-- [ ] Navigation patterns identified
-- [ ] Lazy loading strategies noted
-- [ ] Code splitting patterns documented
-
-### frontend-api-integration.md (if generated)
-
-- [ ] API client library identified
-- [ ] API calling patterns documented
-- [ ] Request/response handling explained
-- [ ] Error handling for API calls documented
-- [ ] Loading state management identified
-- [ ] Caching strategies noted
-
-### frontend-styling.md (if generated)
-
-- [ ] Styling solution identified (CSS Modules, Styled Components, etc.)
-- [ ] Styling organization documented
-- [ ] Theming implementation explained
-- [ ] Design system patterns identified
-- [ ] Responsive design approach documented
-- [ ] CSS architecture patterns noted
-
-## Supporting Documentation Quality
-
-### database.md (if generated)
-
-- [ ] Database system and version identified
-- [ ] Schema design patterns documented
-- [ ] Table relationships analyzed
-- [ ] Indexing strategies noted
-- [ ] Migration patterns documented
-- [ ] Query optimization patterns identified
-
-### testing.md (if generated)
-
-- [ ] Testing frameworks identified correctly
-- [ ] Test organization structure documented
-- [ ] Unit testing patterns explained
-- [ ] Integration testing approaches noted
-- [ ] E2E testing strategy documented
-- [ ] Mocking patterns identified
-- [ ] Coverage expectations specified
-
-### deployment.md (if generated)
-
-- [ ] CI/CD platform identified
-- [ ] Build pipeline stages documented
-- [ ] Deployment strategies explained
-- [ ] Environment configurations noted
-- [ ] Infrastructure as code documented
-- [ ] Monitoring and logging identified
-
-### conventions.md (if generated)
-
-- [ ] Linting rules documented
-- [ ] Formatting standards specified
-- [ ] Naming conventions explained with examples
-- [ ] Code organization principles identified
-- [ ] Documentation standards noted
-- [ ] Best practices enforced documented
-
-## Index and Navigation
-
-### index.md
-
-- [ ] Index includes all generated documents
-- [ ] Navigation links work correctly (relative paths)
-- [ ] Quick navigation section is clear
-- [ ] Usage instructions are helpful
-- [ ] Update guidance provided
-- [ ] No broken links or references
-
-## Overall Quality Standards
-
-### Technical Accuracy
-
-- [ ] All technology names and versions are correct
-- [ ] Patterns described match actual codebase implementation
-- [ ] No speculative or assumed information without qualification
-- [ ] Code examples (if included) are accurate
-- [ ] Terminology is consistent throughout all documents
-
-### Completeness
-
-- [ ] All selected documents were generated
-- [ ] No sections contain placeholder text
-- [ ] Each document addresses its topic comprehensively
-- [ ] Cross-references between documents are accurate
-- [ ] All documents saved to correct location
-
-### Clarity and Usefulness
-
-- [ ] Documents are well-structured and organized
-- [ ] Language is clear and professional
-- [ ] Examples are provided where helpful
-- [ ] Patterns are explained, not just listed
-- [ ] Documents will be useful for AI implementation
-- [ ] Documents are helpful for human developers
-
-### File Management
-
-- [ ] All files saved to {tech_architecture_doc_path}
-- [ ] Existing files handled according to user preference
-- [ ] Backup files created when overwriting (.backup extension)
+- [ ] Directories created as needed ({tech_architecture_doc_path}/{{layer}}/)
+- [ ] Existing files handled appropriately:
+  - [ ] Overwrite with backup (.backup extension) if selected
+  - [ ] Merge preserving relevant content if selected
+  - [ ] Skip unchanged if selected
+  - [ ] Compare shown first if selected
+- [ ] All files saved to correct paths
 - [ ] File permissions are appropriate
-- [ ] Directory structure created if it didn't exist
 
-## Post-Generation Validation
+## Index Updates
 
-- [ ] User reviewed and approved all generated documents
-- [ ] Completion summary displayed with all file locations
-- [ ] Next steps guidance provided to user
-- [ ] Documentation is ready for use in dev workflows
-- [ ] No error messages or warnings during generation
+- [ ] overview.md index updated with new documentation
+- [ ] Index entries in appropriate layer sections
+- [ ] Index alphabetically sorted within each layer
+- [ ] Brief descriptions are concise (one line each)
+- [ ] "Last Updated" timestamp updated
+- [ ] All links work correctly (relative paths)
 
-## Critical Issues
+## Documentation Structure Validation
+
+- [ ] Follows progressive documentation principle (incremental additions)
+- [ ] Layer organization is logical (fe/, be/, db/, infra/, shared/)
+- [ ] Structure is flat by default (unless user created subfolders)
+- [ ] File naming is consistent and descriptive
+- [ ] Related documents are properly cross-linked
+- [ ] Structure supports easy future extensions
+
+## Quality Assurance
+
+- [ ] No spelling errors in generated content
+- [ ] Markdown formatting is correct throughout
+- [ ] Code blocks properly formatted with language tags
+- [ ] Links between documents work correctly
+- [ ] File paths are absolute and correct
+- [ ] No placeholder text or TODO markers remain
+- [ ] Generated content is genuinely useful for AI implementation
+- [ ] Content passes conciseness test (no verbosity)
+
+## #yolo Mode Compliance
+
+- [ ] If #yolo active: All confirmations skipped appropriately
+- [ ] If #yolo active: Default choices applied (Overwrite with backup)
+- [ ] If normal mode: User confirmations obtained at key decision points
+- [ ] Mode behavior consistent throughout execution
+
+## User Experience
+
+- [ ] Workflow principles explained clearly at start
+- [ ] Progressive documentation concept communicated
+- [ ] User given appropriate choices at decision points
+- [ ] Communication in {communication_language}
+- [ ] Progress indicated throughout workflow
+- [ ] File save confirmations displayed (✓ Saved {{filename}}.md)
+
+## Completion Summary
+
+- [ ] Comprehensive summary displayed
+- [ ] All generated files listed with line counts
+- [ ] Documentation structure tree shown
+- [ ] Total file count and line count displayed
+- [ ] Location confirmed ({tech_architecture_doc_path})
+- [ ] Next steps provided:
+  - [ ] Review documentation instructions
+  - [ ] Usage in dev workflows explained
+  - [ ] Progressive documentation guidance
+  - [ ] Team sharing suggestions
+- [ ] Configuration path mentioned (bmad/sdd/config.yaml)
+- [ ] Option to analyze more, exit, or view docs offered
+
+## Progressive Documentation Ready
+
+- [ ] Documentation can be easily extended with future runs
+- [ ] Structure supports incremental additions
+- [ ] Index makes navigation easy for humans and AI
+- [ ] Instructions for adding more documentation provided
+- [ ] Workflow can be re-run for additional implementations
+- [ ] Existing files can be merged or overwritten as needed
+
+## Integration with Development Workflows
+
+- [ ] Documentation is ready for use in dev-flow workflow
+- [ ] Documentation is ready for use in create-tech-spec workflow
+- [ ] Path configured correctly in bmad/sdd/config.yaml
+- [ ] Documentation format is AI-friendly
+- [ ] Content provides sufficient context for implementation
+
+## Critical Issues Check
 
 **If any of these are found, workflow execution should be corrected:**
 
 - ❌ Generic or placeholder content in documents
 - ❌ Incorrect technology stack identification
-- ❌ Missing major architectural patterns
+- ❌ Missing key architectural patterns
 - ❌ Broken references between documents
 - ❌ Files not saved to configured path
 - ❌ User-selected documents not generated
 - ❌ Incomplete document sections
+- ❌ Verbose content (>300 lines without justification)
+- ❌ Full source code instead of concise examples
+- ❌ Missing gotchas or dependencies
+- ❌ No actionable patterns for AI implementation
