@@ -10,7 +10,7 @@
 <invoke-agent>{project-root}/bmad/sdd/agents/dev-agent.md</invoke-agent>
 </step>
 
-<step n="1" goal="Fetch Jira task details">
+<step n="1" goal="Fetch Jira task details and UI specifications">
 <ask>Please provide the Jira task number (e.g., FIS-00002):</ask>
 
 <action>Store as {{jira_task_number}} and parse to get {{jira_proj}} and {{jira_number}}</action>
@@ -18,7 +18,32 @@
 <action>Extract task title, description, acceptance criteria, and labels</action>
 <action>Check for UI spec links in the Jira ticket (in description, comments, or attachments)</action>
 <action>If UI spec link found, store as {{ui_spec_link}}</action>
-<action>Store as {{task_details}}</action>
+<action>Analyze {{ui_spec_link}} to determine if it's a Figma link (contains 'figma.com')</action>
+
+<check if="ui_spec_link is Figma link">
+  <action>Check if Figma MCP server is available by testing MCP connection</action>
+
+  <check if="Figma MCP available">
+    <action>Inform user: "📐 Figma design spec detected. Reading design specifications from Figma..."</action>
+    <action>Use Figma MCP to fetch design specifications:
+    - Extract Figma file ID from {{ui_spec_link}}
+    - Read design components, layout, styling specifications
+    - Capture design tokens (colors, spacing, typography)
+    - Extract component hierarchy and interactions
+    - Note any design annotations or developer notes</action>
+    <action>Store Figma design data as {{figma_spec}}</action>
+    <action>Inform user: "✅ Figma specifications loaded successfully. This will be included in tech spec generation."</action>
+  </check>
+
+  <check if="Figma MCP not available">
+    <action>Inform user: "ℹ️ Figma link detected but Figma MCP not configured. Tech spec will reference the Figma link but won't include detailed design specifications. Consider setting up Figma MCP for automatic design spec extraction."</action>
+    <action>Set {{figma_spec}} = "Figma link: {{ui_spec_link}} (MCP not available - manual review required)"</action>
+  </check>
+</check>
+
+<action if="ui_spec_link is not Figma link">Set {{figma_spec}} = null</action>
+
+<action>Store all task information as {{task_details}}</action>
 <action>Inform user: "Successfully fetched Jira task {{jira_task_number}}. Proceeding to analyze codebase context..."</action>
 <action>Automatically proceed to next step without waiting for user confirmation</action>
 
@@ -26,14 +51,15 @@
 </step>
 
 <step n="2" goal="Load codebase context and generate initial tech spec">
-<action>Analyze the codebase to understand patterns, architecture, and conventions</action>
+<critical>⚠️ AGENT SCOPE RESTRICTION - Use ONLY dev-agent capabilities for analysis. DO NOT invoke agents from other modules (BMM, BMB, etc.). All analysis must be performed by dev-agent using its own analyze-codebase capabilities or analyze-architecture workflow from SDD module.</critical>
 
 <check if="tech_architecture_doc_path exists">
   <action>Load and study architecture documentation</action>
 </check>
 
 <check if="tech_architecture_doc_path not available">
-  <action>Perform codebase analysis to infer architecture</action>
+  <action>Perform codebase analysis using SDD's analyze-architecture workflow at {project-root}/bmad/sdd/workflows/analyze-architecture/workflow.yaml to infer architecture</action>
+  <action>Note: This ensures we use SDD module's own analysis tools, not external module agents</action>
 </check>
 
 <action>Identify relevant code patterns, dependencies, and conventions for this task</action>
@@ -48,10 +74,17 @@
 - **Metadata**: Jira ticket, date, engineer, task name
 - **Technical Solution**: Implementation approach at high level
 - **Codebase Context Analysis**: Include the {{codebase_analysis}} findings
+- **UI/UX Specifications** (if {{figma_spec}} exists): Include Figma design specifications with:
+  - Design components and their properties
+  - Layout and responsive behavior requirements
+  - Design tokens (colors, spacing, typography)
+  - Component interactions and states
+  - Accessibility considerations from design
+  - Link to original Figma file: {{ui_spec_link}}
 - **Scope of Impact**: All files and modules that will be affected
-- **Task Breakdown**: Break into 3-6 logical implementation phases
-- **Technical Dependencies**: Libraries, services, APIs, other tasks
-- **Implementation Notes**: Patterns to follow, conventions, gotchas
+- **Task Breakdown**: Break into 3-6 logical implementation phases (include UI implementation phase if Figma spec exists)
+- **Technical Dependencies**: Libraries, services, APIs, other tasks (include design system dependencies if applicable)
+- **Implementation Notes**: Patterns to follow, conventions, gotchas (include design-to-code translation notes if Figma spec exists)
 - **Effort Estimation**: Complexity (Low/Medium/High), Confidence level
 - **Status**: Set to "Planning"</action>
 

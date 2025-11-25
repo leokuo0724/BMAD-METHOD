@@ -1,6 +1,6 @@
 # Dev Flow Workflow Configuration
 name: dev-flow
-description: "Complete development cycle from Jira task to pull request: tech spec → implementation → tests → PR"
+description: "Complete development cycle from Jira task to pull request: Jira fetch + Figma design specs (if available) → codebase analysis → tech spec → implementation → tests → PR. Automatically integrates Figma MCP for UI specifications when available."
 author: "SDD Module"
 
 # Paths
@@ -23,6 +23,10 @@ tech_architecture_doc_path: "{config_source}:tech_architecture_doc_path"
 commit_msg_template_path: "{config_source}:commit_msg_template_path"
 pr_template_path: "{config_source}:pr_template_path"
 write_unit_test_along_with_task: "{config_source}:write_unit_test_along_with_task"
+
+# UI/Design integration (optional)
+# If Figma MCP is available, design specs will be automatically fetched from Figma links in Jira tickets
+figma_mcp_enabled: runtime-detected # Auto-detected at runtime
 
 # Output configuration for tech spec
 tech_spec_output_file: "{output_folder}/tech-spec/tech-spec-{jira_proj}-{jira_number}-{task_name}-{{date}}.md"

@@ -5,9 +5,11 @@
 - [ ] Tech spec document created and saved
 - [ ] All metadata fields populated
 - [ ] Technical solution clearly described
+- [ ] UI/UX specifications included (if Figma link present in Jira)
+- [ ] Figma design specs properly integrated (if Figma MCP available)
 - [ ] Complete scope of impact documented
 - [ ] Logical task breakdown into phases
-- [ ] All dependencies identified
+- [ ] All dependencies identified (including design system if UI task)
 - [ ] Implementation notes provided
 - [ ] Effort estimation completed
 - [ ] Status field maintained throughout
@@ -78,6 +80,8 @@
 - [ ] Implementation matches spec
 - [ ] All deviations from spec documented
 - [ ] Knowledge captured in tech spec
+- [ ] Only SDD module agents/tools used (no BMM or other module agents)
+- [ ] Codebase analysis performed using dev-agent or SDD's analyze-architecture workflow
 
 ## Final Validation
 
