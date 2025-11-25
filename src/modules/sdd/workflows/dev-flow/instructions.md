@@ -44,10 +44,10 @@
 <action if="ui_spec_link is not Figma link">Set {{figma_spec}} = null</action>
 
 <action>Store all task information as {{task_details}}</action>
-<action>Inform user: "Successfully fetched Jira task {{jira_task_number}}. Proceeding to analyze codebase context..."</action>
-<action>Automatically proceed to next step without waiting for user confirmation</action>
+<action>Inform user: "✅ Successfully fetched Jira task {{jira_task_number}}.
 
-<template-output>jira_task_fetch</template-output>
+Task details loaded. Proceeding to analyze codebase context..."</action>
+<action>Automatically continue to Step 2 for codebase analysis</action>
 </step>
 
 <step n="2" goal="Load codebase context and generate initial tech spec">
@@ -100,10 +100,12 @@ Parse the "Task Breakdown" section and create a status tracking table:
 This enables real-time phase tracking during implementation.</action>
 
 <action>Save to: {tech_spec_output_file}</action>
+<action>Store tech spec path as {{tech_spec_path}}</action>
 <action>Display the tech spec to {user_name}</action>
-<action>Inform user: "Tech spec generated and saved. Codebase context analysis is included in the document."</action>
+<action>Inform user: "✅ Tech spec generated and saved to: {{tech_spec_path}}
 
-<template-output>tech_spec_with_context</template-output>
+Codebase context analysis is included in the document. Proceeding to review..."</action>
+<action>Automatically continue to Step 3 for formal review and approval</action>
 </step>
 
 <step n="3" goal="Review and approve tech spec">
@@ -235,7 +237,9 @@ Select [1/2]:</ask>
 <action if="user selected 1">Set {{commit_strategy}} = "auto"</action>
 <action if="user selected 2">Set {{commit_strategy}} = "manual"</action>
 
-<action>Inform user: "Commit strategy set to {{commit_strategy}}. Proceeding to implementation..."</action>
+<action>Inform user: "✅ Commit strategy set to {{commit_strategy}}.
+
+Starting implementation workflow..."</action>
 
 <action>Invoke implement-task workflow with parameters:
 
@@ -246,7 +250,6 @@ Select [1/2]:</ask>
 <action>Note: The implement-task workflow will handle all implementation, testing, and PR creation steps. When it completes, return here for final summary.</action>
 </check>
 
-<template-output>tech_spec_approval</template-output>
 </step>
 
 <step n="4" goal="Implementation via implement-task workflow">
@@ -259,8 +262,6 @@ Select [1/2]:</ask>
 - Tech spec updates</action>
 
 <action>Wait for implement-task workflow to complete...</action>
-
-<template-output>implementation_delegated</template-output>
 </step>
 
 <step n="5" goal="Complete dev-flow and provide summary">
@@ -295,8 +296,6 @@ Select [1/2]:</ask>
 
 Thank you for using Dev-Flow! 🚀
 </action>
-
-<template-output>workflow_completion</template-output>
 </step>
 
 <step n="11" goal="Update agent memory with learnings">
