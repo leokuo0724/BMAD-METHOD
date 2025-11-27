@@ -8,9 +8,18 @@
 <workflow>
 
 <step n="1" goal="Get article URL from user">
-<ask>請提供要消化的文章 URL:</ask>
+<critical>This workflow supports direct URL parameter. If user invoked with `/digest <url>`, use that URL directly without asking.</critical>
 
-<action>Store the URL as {{source_url}}</action>
+<check if="URL provided as parameter">
+  <action>Use the provided URL as {{source_url}}</action>
+  <action>Skip asking, proceed directly to validation</action>
+</check>
+
+<check if="no URL parameter">
+  <ask>請提供要消化的文章 URL:</ask>
+  <action>Store the URL as {{source_url}}</action>
+</check>
+
 <action>Validate URL format (must be valid http/https URL)</action>
 
 <check if="invalid URL">
@@ -20,19 +29,30 @@
 </step>
 
 <step n="2" goal="Fetch and analyze article content">
-<action>Attempt to fetch content using Playwright MCP (preferred method for dynamic content):
+<critical>PERFORMANCE OPTIMIZATION: Try WebFetch first (faster for static content), only use Playwright if WebFetch fails or returns insufficient content.</critical>
 
-**Using mcp\_\_playwright tool**:
+<action>Attempt to fetch content using WebFetch (preferred for speed):
+
+**Primary method - WebFetch**:
+
+1. Use WebFetch tool to fetch {{source_url}}
+2. Check if returned content contains substantial article text (> 500 characters of actual content)
+3. If content is sufficient, proceed to extraction
+
+**Fallback method - Playwright MCP** (if WebFetch fails or returns insufficient content):
 
 1. Navigate to {{source_url}} using playwright_navigate
 2. Wait for page to fully load (wait for network idle)
 3. Use playwright_snapshot to get page accessibility tree and extract full HTML content
 4. Parse HTML to identify image elements with their URLs, alt text, and surrounding context
 
-If Playwright MCP is not available or fails:
+Why this order:
 
-- Fall back to WebFetch tool as backup method
-  </action>
+- WebFetch is 5-10x faster for static blogs (Medium, Dev.to, personal blogs)
+- Playwright is only needed for JavaScript-heavy sites (React docs, SPAs)
+
+**Note**: Ensure Playwright MCP is configured with `--headless` flag to avoid browser windows popping up. See INSTALLATION.md for configuration details.
+</action>
 
 <action>Extract the following information from fetched content:
 
@@ -51,12 +71,11 @@ If Playwright MCP is not available or fails:
 <action>Generate article outline analyzing the structure and main sections</action>
 <action>Create URL-friendly slug from article title for filename (lowercase, hyphens, no spaces)</action>
 <action>Store as {{article_title_slug}}</action>
-
-<template-output>article_title</template-output>
-<template-output>outline</template-output>
 </step>
 
 <step n="3" goal="Extract core information with context">
+<critical>Perform ALL extraction and analysis in the ORIGINAL LANGUAGE of the article. Do NOT translate yet - translation happens in Step 4 after content is condensed.</critical>
+
 <action>Analyze the fetched content and extract the following sections with emphasis on WHY and HOW context:
 
 **Executive Summary** ({{executive_summary}}):
@@ -179,20 +198,19 @@ For each practice:
 - Skip sections that don't apply (e.g., if no code examples, leave empty)
   </action>
 
-<template-output>executive_summary</template-output>
-<template-output>problem_context</template-output>
-<template-output>core_concepts</template-output>
-<template-output>key_points</template-output>
-<template-output>technical_details</template-output>
-<template-output>best_practices</template-output>
-<template-output>mental_models</template-output>
-<template-output>further_reading</template-output>
-
 Note: Code examples are embedded within {{technical_details}} and other relevant sections, not as a separate output.
 </step>
 
-<step n="4" goal="Translate content to target language">
-<action>Translate ALL extracted content sections to {translation_language}:
+<step n="4" goal="Translate condensed content to target language">
+<critical>PERFORMANCE OPTIMIZATION: Only translate the CONDENSED, EXTRACTED content from Step 3, NOT the original article. This significantly reduces translation time and token usage.</critical>
+
+<check if="target language same as article language">
+  <action>Skip translation - content is already in target language {translation_language}</action>
+  <action>Proceed directly to Step 5</action>
+</check>
+
+<action>Translate ONLY the extracted and condensed content sections to {translation_language}:
+
 - Executive summary
 - Problem context
 - Core concepts
@@ -213,8 +231,6 @@ Translation guidelines:
   </action>
 
 <action>Update all template variables with translated content</action>
-
-<template-output>translated_content</template-output>
 </step>
 
 <step n="5" goal="Generate tags and metadata">
@@ -233,9 +249,6 @@ Store as {{tags}}
 
 <action>Set {{digest_date}} to current date in YYYY-MM-DD format</action>
 <action>Set {{translation_language}} from config</action>
-
-<template-output>tags</template-output>
-<template-output>digest_date</template-output>
 </step>
 
 <step n="6" goal="Apply template and save knowledge note">
@@ -275,8 +288,6 @@ Note: Code examples are embedded within {{technical_details}} section contextual
   <action>Report error: "❌ 無法儲存檔案,請檢查路徑權限"</action>
   <action>Display the generated content for manual saving</action>
 </check>
-
-<template-output>final_output_path</template-output>
 </step>
 
 <step n="7" goal="Report completion with quality summary">
