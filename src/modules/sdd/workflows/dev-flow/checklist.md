@@ -38,7 +38,9 @@
 
 ## Git Workflow
 
-- [ ] Phased commits created (one per implementation phase)
+- [ ] Implementation strategy selected (full-auto-with-pr, full-auto-without-pr, semi-auto-with-commit, or manual)
+- [ ] Commits follow selected strategy behavior
+- [ ] Phased commits created (one per implementation phase) if auto-commit strategy
 - [ ] Commit messages follow template
 - [ ] Jira ticket referenced in all commits
 - [ ] Commits are atomic and focused
@@ -48,7 +50,8 @@
 
 ## Pull Request
 
-- [ ] PR created using gh command
+- [ ] PR creation follows selected strategy (auto for full-auto-with-pr, ask for others)
+- [ ] PR created using gh command (or skipped if user declined)
 - [ ] PR title includes Jira ticket number
 - [ ] PR description follows template
 - [ ] Tech spec linked in PR

@@ -5,6 +5,7 @@
 - [ ] Tech spec loaded and validated
 - [ ] All required information present in tech spec
 - [ ] Implementation plan reviewed and approved
+- [ ] Implementation strategy selected (full-auto-with-pr, full-auto-without-pr, semi-auto-with-commit, or manual)
 - [ ] Working branch created/selected
 - [ ] Git working directory clean or changes committed
 
@@ -45,7 +46,8 @@
 
 ## Git Commits
 
-- [ ] Each phase committed separately
+- [ ] Commits follow selected strategy (auto or manual)
+- [ ] Each phase committed separately (if auto or semi-auto-with-commit strategy)
 - [ ] Commit messages follow template
 - [ ] Commit messages reference Jira task
 - [ ] Commit messages descriptive
@@ -64,7 +66,8 @@
 ## Pull Request
 
 - [ ] Branch pushed to remote
-- [ ] PR created successfully
+- [ ] PR creation follows selected strategy (auto for full-auto-with-pr, ask for others)
+- [ ] PR created successfully (or skipped if user declined)
 - [ ] PR title follows convention: [PROJ-NUM] Task title
 - [ ] PR description complete and clear
 - [ ] PR references Jira task

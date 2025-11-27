@@ -36,10 +36,9 @@ Example: docs/sdd/tech-spec/tech-spec-FIS-00002-fe-global-search-bar.md</ask>
 - Phases: {{phase_count}} phases planned
 - Estimated complexity: {{complexity_level}}</action>
 
-<template-output>tech_spec_loaded</template-output>
 </step>
 
-<step n="2" goal="Choose commit strategy">
+<step n="2" goal="Initialize implementation strategy">
 <action>Update tech spec status to "In Progress" with start timestamp</action>
 
 <action>Initialize Phase Status Tracking table if not already present:
@@ -53,21 +52,43 @@ Check if the tech spec has a "Phase Status Tracking" table:
 
 This ensures all phases are tracked from the start of implementation.</action>
 
-<check if="commit_strategy not provided">
-  <ask>Choose commit strategy for implementation:
+<check if="workflow_strategy not provided">
+  <ask>Choose implementation strategy:
 
-1. **Auto-commit per phase** - AI automatically creates commits after each phase (recommended for streamlined workflow)
-2. **Manual commit control** - You decide when to commit (provides more flexibility)
+1. 🚀 **Full Auto with PR** - Fastest (auto commit, auto continue, auto PR)
+2. ⚡ **Full Auto without PR** - Fast with PR control (auto commit, auto continue, ask PR)
+3. 🎯 **Semi-Auto with Commit** - Review between phases (auto commit, ask continue, ask PR)
+4. 👤 **Manual Control** - Full control (manual commit, ask continue, ask PR)
 
-Select [1/2]:</ask>
+Select [1/2/3/4]:</ask>
 
-<action if="user selected 1">Set {{commit_strategy}} = "auto"</action>
-<action if="user selected 2">Set {{commit_strategy}} = "manual"</action>
+<action if="user selected 1">Set {{workflow_strategy}} = "full-auto-with-pr"</action>
+<action if="user selected 2">Set {{workflow_strategy}} = "full-auto-without-pr"</action>
+<action if="user selected 3">Set {{workflow_strategy}} = "semi-auto-with-commit"</action>
+<action if="user selected 4">Set {{workflow_strategy}} = "manual"</action>
 </check>
 
-<action>Inform user: "Commit strategy set to {{commit_strategy}}. Starting implementation..."</action>
+<action>Parse workflow strategy to determine behaviors:
 
-<template-output>commit_strategy_selected</template-output>
+- If {{workflow_strategy}} == "full-auto-with-pr" or "full-auto-without-pr":
+  - Set {{commit_behavior}} = "auto"
+  - Set {{continue_behavior}} = "auto"
+
+- If {{workflow_strategy}} == "semi-auto-with-commit":
+  - Set {{commit_behavior}} = "auto"
+  - Set {{continue_behavior}} = "ask"
+
+- If {{workflow_strategy}} == "manual":
+  - Set {{commit_behavior}} = "manual"
+  - Set {{continue_behavior}} = "ask"
+
+- If {{workflow_strategy}} == "full-auto-with-pr":
+  - Set {{pr_behavior}} = "auto"
+- Else:
+  - Set {{pr_behavior}} = "ask"
+    </action>
+
+<action>Inform user: "Implementation strategy set to {{workflow_strategy}}. Starting implementation..."</action>
 </step>
 
 <step n="3" goal="Implement solution phase-by-phase" repeat="for-each-phase">
@@ -109,7 +130,7 @@ This shows which phase is currently being worked on.</action>
   <action>Add test info to {{implementation_summary}}</action>
 </check>
 
-<check if="commit_strategy == auto">
+<check if="commit_behavior == auto">
   <action>Load commit message template:
 
 Check if custom template exists at {commit_msg_template_path}:
@@ -125,37 +146,8 @@ Check if custom template exists at {commit_msg_template_path}:
 - Always include: Jira: {{jira_task_number}}</action>
 
   <action>Create git commit for this phase</action>
-  <action>Inform user: "Phase {{phase_number}} committed."</action>
+  <action>Inform user: "✅ Phase {{phase_number}} committed."</action>
   </check>
-
-<check if="commit_strategy == manual">
-  <action>Inform user: "✅ Phase {{phase_number}} implementation complete. Files ready for commit (manual strategy selected)."</action>
-
-<ask>📝 Manual Commit Strategy Active
-
-You selected manual commit control. Please review the changes and create a commit before proceeding.
-
-**Suggested workflow:**
-
-1. Review the files changed in this phase
-2. Use `/generate-commit` to create a commit for this phase
-3. Return here to continue
-
-Have you committed the changes for this phase? [yes/not-yet/skip]</ask>
-
-  <check if="user says not-yet">
-    <action>Wait for user to commit. When ready, select 'yes' above.</action>
-    <goto step="3">Return to commit check</goto>
-  </check>
-
-  <check if="user says skip">
-    <action>Note: Skipping commit for this phase. You can commit manually later before creating PR.</action>
-  </check>
-</check>
-
-<check if="commit_strategy == auto">
-  <action>Phase {{phase_number}} committed automatically.</action>
-</check>
 
 <action>Update tech spec with phase completion status:
 
@@ -170,41 +162,89 @@ Example update:
 
 This provides real-time visibility into implementation progress directly in the tech spec document.</action>
 
-<ask>Phase completed. Would you like to:
+<check if="continue_behavior == ask AND commit_behavior == auto">
+  <ask>Phase {{phase_number}} completed and committed.
 
 1. **Continue** - Proceed to next phase
-2. **Adjust** - Make changes to current phase
+2. **Adjust** - Make changes to current phase (will git reset HEAD^ and recommit)
 3. **Pause** - Save progress and exit (can resume later)
 
 Select [1/2/3]:</ask>
 
-<check if="user selected 2">
-  <ask>What adjustments are needed?</ask>
-  <action>Make the requested changes</action>
-
-  <check if="commit_strategy == auto">
+  <check if="user selected 2">
+    <ask>What adjustments are needed?</ask>
+    <action>Execute: git reset HEAD^</action>
+    <action>Inform user: "Previous commit undone. Making adjustments..."</action>
+    <action>Make the requested changes</action>
     <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
-    <action>Create adjustment commit or amend previous commit</action>
+    <action>Create new commit with adjusted implementation</action>
+    <action>Inform user: "✅ Phase {{phase_number}} adjusted and recommitted."</action>
+    <goto step="3">Return to phase completion checkpoint</goto>
   </check>
 
-<goto step="3">Return to phase completion checkpoint</goto>
-</check>
-
-<check if="user selected 3">
-  <action>Update tech spec with "Paused" status and last completed phase</action>
-  <action>Provide resume instructions:
+  <check if="user selected 3">
+    <action>Update tech spec with "Paused" status and last completed phase</action>
+    <action>Provide resume instructions:
 
 To resume this workflow later:
 
 1. Run: workflow implement-task
 2. Provide tech spec path: {{tech_spec_path}}
-3. Select same commit strategy: {{commit_strategy}}
+3. Select same strategy: {{workflow_strategy}}
 4. Implementation will continue from Phase {{next_phase_number}}</action>
    <action>Exit workflow gracefully</action>
    <goto step="end">Exit workflow</goto>
    </check>
+   </check>
 
-<template-output>implementation_phase</template-output>
+<check if="continue_behavior == ask AND commit_behavior == manual">
+  <ask>Phase {{phase_number}} completed.
+
+1. **Commit this phase and continue** - Create commit and proceed
+2. **Skip commit, continue** - Proceed without committing (commit later)
+3. **Adjust this phase** - Make changes before committing
+4. **Pause** - Save progress and exit
+
+Select [1/2/3/4]:</ask>
+
+  <check if="user selected 1">
+    <action>Inform user: "Please commit Phase {{phase_number}} now using /generate-commit"</action>
+    <ask>Have you committed? [yes/not-yet]</ask>
+    <check if="user says not-yet">
+      <action>Wait for user to commit. When ready, select 'yes' above.</action>
+      <goto step="3">Return to commit check</goto>
+    </check>
+  </check>
+
+  <check if="user selected 2">
+    <action>Note: Skipping commit for this phase. You can commit manually later before creating PR.</action>
+  </check>
+
+  <check if="user selected 3">
+    <ask>What adjustments are needed?</ask>
+    <action>Make the requested changes</action>
+    <action>Inform user: "✅ Phase {{phase_number}} adjusted. Remember to commit when satisfied."</action>
+    <goto step="3">Return to phase completion checkpoint</goto>
+  </check>
+
+  <check if="user selected 4">
+    <action>Update tech spec with "Paused" status and last completed phase</action>
+    <action>Provide resume instructions:
+
+To resume this workflow later:
+
+1. Run: workflow implement-task
+2. Provide tech spec path: {{tech_spec_path}}
+3. Select same strategy: {{workflow_strategy}}
+4. Implementation will continue from Phase {{next_phase_number}}</action>
+   <action>Exit workflow gracefully</action>
+   <goto step="end">Exit workflow</goto>
+   </check>
+   </check>
+
+<check if="continue_behavior == auto">
+  <action>Automatically continuing to next phase...</action>
+</check>
 </step>
 
 <step n="4" goal="Review complete implementation">
@@ -236,7 +276,7 @@ Select [1/2/3]:</ask>
 
 <action>Inform user: "⚠️ Post-implementation adjustments detected. Auto-commit is disabled for manual control. Please use /generate-commit when ready to commit your changes."</action>
 
-  <check if="commit_strategy == auto">
+  <check if="commit_behavior == auto">
     <action>Note: Auto-commit is intentionally disabled after step 4 implementation review to give you full control over post-implementation changes. You can commit manually when satisfied.</action>
   </check>
 
@@ -251,14 +291,12 @@ Select [1/2/3]:</ask>
 
 <action>Inform user: "⚠️ Additional phase added after implementation review. Auto-commit is disabled for manual control. Please use /generate-commit when ready to commit your changes."</action>
 
-  <check if="commit_strategy == auto">
+  <check if="commit_behavior == auto">
     <action>Note: Auto-commit is intentionally disabled for post-implementation phases to give you full control. You can commit manually when satisfied.</action>
   </check>
 
 <goto step="4">Return to review</goto>
 </check>
-
-<template-output>implementation_review</template-output>
 </step>
 
 <step n="5" goal="Generate unit tests" if="write_unit_test_along_with_task == false">
@@ -278,7 +316,7 @@ Select [1/2/3]:</ask>
   <action>Analyze failures and determine cause</action>
   <action>Fix implementation or tests as needed</action>
 
-  <check if="commit_strategy == auto">
+  <check if="commit_behavior == auto">
     <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
     <action>Create commit for fixes following the loaded template format</action>
   </check>
@@ -289,12 +327,10 @@ Select [1/2/3]:</ask>
 <action>Report test coverage achieved</action>
 <action>Add test info to {{implementation_summary}}</action>
 
-<check if="commit_strategy == auto">
+<check if="commit_behavior == auto">
   <action>Load commit template from {commit_msg_template_path} if available, otherwise use default</action>
   <action>Create commit for test suite following the loaded template format</action>
 </check>
-
-<template-output>unit_tests</template-output>
 </step>
 
 <step n="6" goal="Final review and validation">
@@ -314,7 +350,7 @@ Select [1/2/3]:</ask>
 
     <action>Inform user: "⚠️  Validation fixes applied. Auto-commit is disabled - please use /generate-commit when ready."</action>
 
-    <check if="commit_strategy == auto">
+    <check if="commit_behavior == auto">
       <action>Note: Auto-commit is intentionally disabled for validation fixes to give you full control. You can commit manually when satisfied.</action>
     </check>
 
@@ -338,18 +374,16 @@ Select [1/2/3]:</ask>
 
 <action>Inform user: "⚠️ Final adjustments applied. Auto-commit is disabled - please use /generate-commit when ready."</action>
 
-  <check if="commit_strategy == auto">
+  <check if="commit_behavior == auto">
     <action>Note: Auto-commit is intentionally disabled for final adjustments to give you full control. You can commit manually when satisfied.</action>
   </check>
 
 <goto step="6">Return to final review</goto>
 </check>
-
-<template-output>final_review</template-output>
 </step>
 
 <step n="7" goal="Handle manual commits if needed">
-<check if="commit_strategy == manual">
+<check if="commit_behavior == manual">
   <action>Inform user: "You selected manual commit strategy. Please commit your changes now before creating PR."</action>
   <ask>Have you committed all changes and pushed to remote? [yes/no]</ask>
 
@@ -360,11 +394,24 @@ Select [1/2/3]:</ask>
 </check>
 
 <action>Check that current branch is pushed to remote</action>
-
-<template-output>commit_verification</template-output>
 </step>
 
 <step n="8" goal="Generate pull request">
+
+<check if="pr_behavior == ask">
+  <ask>All implementation complete. Create pull request? [yes/no]</ask>
+
+  <check if="user says no">
+    <action>Inform user: "Skipping PR creation. You can create it manually later using:
+
+gh pr create
+
+Or use the dev-agent's create-pr command."</action>
+<action>Set {{pr_url}} = "Not created - manual PR required"</action>
+<goto step="9">Skip to completion</goto>
+</check>
+</check>
+
 <action>Push current branch to remote if not already pushed</action>
 
 <action>Load PR template:
@@ -398,11 +445,17 @@ Check if custom template exists at {pr_template_path}:
 
 <action>Display PR preview to user</action>
 
-<ask>Review the PR title and description. Approve? [yes/edit]</ask>
+<check if="pr_behavior == ask">
+  <ask>Review the PR title and description. Approve? [yes/edit]</ask>
 
-<check if="user says edit">
-  <ask>Provide updated title or description:</ask>
-  <action>Update PR content</action>
+  <check if="user says edit">
+    <ask>Provide updated title or description:</ask>
+    <action>Update PR content</action>
+  </check>
+</check>
+
+<check if="pr_behavior == auto">
+  <action>Inform user: "Creating PR automatically (full-auto-with-pr strategy)..."</action>
 </check>
 
 <action>Execute: gh pr create --title "{{pr_title}}" --body "{{pr_description}}"</action>
@@ -413,8 +466,6 @@ Check if custom template exists at {pr_template_path}:
   <action>Report error</action>
   <action>Provide manual PR creation instructions</action>
 </check>
-
-<template-output>pull_request</template-output>
 </step>
 
 <step n="9" goal="Complete and update documentation">
@@ -434,8 +485,8 @@ Check if custom template exists at {pr_template_path}:
 
 - Tech spec: {{tech_spec_path}}
 - Pull request: {{pr_url}}
-- Commit strategy used: {{commit_strategy}}
-- Total commits: {{commit_count}} (if auto strategy)
+- Implementation strategy used: {{workflow_strategy}}
+- Total commits: {{commit_count}}
 - Test coverage: {{coverage_percentage}}
 - All phases completed
 
@@ -472,7 +523,7 @@ Append the following structured entry:
 **Implementation Approach:**
 
 - Phases completed: [List phase titles from {{implementation_summary}}]
-- Commit strategy: {{commit_strategy}}
+- Implementation strategy: {{workflow_strategy}}
 - Test strategy: {{write_unit_test_along_with_task}}
 
 **Challenges & Solutions:**

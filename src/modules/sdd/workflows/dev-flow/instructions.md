@@ -227,24 +227,28 @@ Continue with current session? [yes/no]</action>
 
   </check>
 
-<ask>Choose commit strategy for implementation:
+<ask>Choose implementation strategy:
 
-1. **Auto-commit per phase** - AI automatically creates commits after each phase (recommended for streamlined workflow)
-2. **Manual commit control** - You decide when to commit (provides more flexibility)
+1. 🚀 **Full Auto with PR** - Fastest (auto commit, auto continue, auto PR)
+2. ⚡ **Full Auto without PR** - Fast with PR control (auto commit, auto continue, ask PR)
+3. 🎯 **Semi-Auto with Commit** - Review between phases (auto commit, ask continue, ask PR)
+4. 👤 **Manual Control** - Full control (manual commit, ask continue, ask PR)
 
-Select [1/2]:</ask>
+Select [1/2/3/4]:</ask>
 
-<action if="user selected 1">Set {{commit_strategy}} = "auto"</action>
-<action if="user selected 2">Set {{commit_strategy}} = "manual"</action>
+<action if="user selected 1">Set {{workflow_strategy}} = "full-auto-with-pr"</action>
+<action if="user selected 2">Set {{workflow_strategy}} = "full-auto-without-pr"</action>
+<action if="user selected 3">Set {{workflow_strategy}} = "semi-auto-with-commit"</action>
+<action if="user selected 4">Set {{workflow_strategy}} = "manual"</action>
 
-<action>Inform user: "✅ Commit strategy set to {{commit_strategy}}.
+<action>Inform user: "✅ Implementation strategy set to {{workflow_strategy}}.
 
 Starting implementation workflow..."</action>
 
 <action>Invoke implement-task workflow with parameters:
 
 - tech_spec_path: {{tech_spec_path}}
-- commit_strategy: {{commit_strategy}}
+- workflow_strategy: {{workflow_strategy}}
 - jira_task_number: {{jira_task_number}}</action>
 
 <action>Note: The implement-task workflow will handle all implementation, testing, and PR creation steps. When it completes, return here for final summary.</action>
@@ -275,7 +279,7 @@ Starting implementation workflow..."</action>
 
 1. ✅ Fetched Jira task: {{jira_task_number}}
 2. ✅ Generated tech spec with codebase analysis
-3. ✅ Selected commit strategy: {{commit_strategy}}
+3. ✅ Selected implementation strategy: {{workflow_strategy}}
 4. ✅ Implemented all phases via implement-task workflow
 5. ✅ Created pull request
 
@@ -283,7 +287,7 @@ Starting implementation workflow..."</action>
 
 - Tech spec: {{tech_spec_path}}
 - Pull request: {{pr_url}}
-- Commit strategy used: {{commit_strategy}}
+- Implementation strategy used: {{workflow_strategy}}
 
 **Next steps:**
 

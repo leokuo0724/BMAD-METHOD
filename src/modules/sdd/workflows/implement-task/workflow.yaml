@@ -1,6 +1,6 @@
 # Implement Task Workflow Configuration
 name: implement-task
-description: "Implementation-only workflow - assumes tech spec already exists, pure execution workflow"
+description: "Implementation-only workflow with 4 strategy options: full-auto-with-pr (fastest), full-auto-without-pr (auto with PR control), semi-auto-with-commit (review between phases), manual (full control)"
 author: "SDD Module"
 
 # Paths
@@ -27,7 +27,7 @@ required_inputs:
 
 # Optional parameters (can be passed from dev-flow)
 optional_inputs:
-  - commit_strategy: "Commit strategy: 'auto' or 'manual' (default: ask user)"
+  - workflow_strategy: "Implementation strategy: 'full-auto-with-pr', 'full-auto-without-pr', 'semi-auto-with-commit', or 'manual' (default: ask user)"
   - jira_task_number: "Jira task number (extracted from tech spec if not provided)"
 
 # Invocation control
