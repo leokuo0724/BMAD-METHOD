@@ -1,0 +1,31 @@
+# Digest Article - Knowledge Builder Core Workflow
+name: "digest-article"
+description: "Transform web article URLs into structured knowledge notes with extraction, analysis, translation, and template application"
+author: "BMad"
+
+# Paths
+installed_path: "{project-root}/.bmad/custom/modules/knowledge-builder/workflows/digest-article"
+template: "{project-root}/.bmad/custom/modules/knowledge-builder/templates/technical-article.md"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# Critical variables from config
+config_source: "{project-root}/.bmad/custom/modules/knowledge-builder/config.yaml"
+translation_language: "{config_source}:translation_language"
+knowledge_base_path: "{config_source}:knowledge_base_path"
+default_template: "{config_source}:default_template"
+use_browser_automation: "{config_source}:use_browser_automation"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# Output configuration
+default_output_file: "{knowledge_base_path}/{article_title_slug}.md"
+
+# Invocation control
+standalone: true
+
+# Required tools
+required_tools:
+  - WebFetch # For article content extraction (fallback for simple pages)
+  - mcp__playwright # For browser automation and rendering dynamic content (preferred, optional)

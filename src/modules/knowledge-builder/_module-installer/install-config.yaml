@@ -1,0 +1,114 @@
+# Knowledge Builder Module Configuration
+# This file defines installation questions and module configuration values
+
+code: knowledge-builder
+name: "Knowledge Builder"
+default_selected: false
+
+# Welcome message shown during installation
+prompt:
+  - "Thank you for choosing Knowledge Builder!"
+  - "智慧學習工具，快速消化網路技術文章，建立個人知識庫。"
+
+# Core config values are automatically inherited:
+## user_name
+## communication_language
+## document_output_language
+## output_folder
+
+# ============================================================================
+# CONFIGURATION FIELDS
+# ============================================================================
+
+# Translation language preference
+translation_language:
+  prompt: "Which language should articles be translated to?"
+  default: "zh-TW"
+  result: "{value}"
+  single-select:
+    - value: "zh-TW"
+      label: "繁體中文 (Traditional Chinese)"
+    - value: "zh-CN"
+      label: "簡體中文 (Simplified Chinese)"
+    - value: "en"
+      label: "English (keep original)"
+    - value: "ja"
+      label: "日本語 (Japanese)"
+
+# Knowledge base storage path
+knowledge_base_path:
+  prompt: "Where should your knowledge base be stored?"
+  default: "knowledge-base"
+  result: "{project-root}/{value}"
+
+# Default knowledge template
+default_template:
+  prompt: "Which template should be used by default?"
+  default: "technical-article"
+  result: "{value}"
+  single-select:
+    - value: "technical-article"
+      label: "Technical Article - For technical blog posts and documentation"
+    - value: "tutorial"
+      label: "Tutorial - For step-by-step guides"
+    - value: "api-docs"
+      label: "API Documentation - For API references"
+    - value: "blog-post"
+      label: "Blog Post - For general blog articles"
+
+# Auto-tagging feature
+auto_tagging:
+  prompt: "Enable automatic tagging?"
+  default: "true"
+  result: "{value}"
+  single-select:
+    - value: "true"
+      label: "Yes - Automatically generate tags (recommended)"
+    - value: "false"
+      label: "No - Manual tagging only"
+
+# Detail level preference
+detail_level:
+  prompt: "How detailed should the generated notes be?"
+  default: "standard"
+  result: "{value}"
+  single-select:
+    - value: "minimal"
+      label: "Minimal - Brief summaries only"
+    - value: "standard"
+      label: "Standard - Balanced detail (recommended)"
+    - value: "detailed"
+      label: "Detailed - Comprehensive notes with examples"
+
+# Browser fetching method
+use_browser_automation:
+  prompt: "Use browser automation for content fetching?"
+  default: "true"
+  result: "{value}"
+  single-select:
+    - value: "true"
+      label: "Yes - Use Playwright for dynamic content (recommended, requires MCP)"
+    - value: "false"
+      label: "No - Use simple HTTP fetch only"
+
+# STATIC FIELDS (no user prompt)
+
+# Module version
+module_version:
+  result: "1.0.0"
+
+# Data directory
+data_path:
+  result: "{project-root}/.bmad/knowledge-builder/data"
+
+# Templates directory
+templates_path:
+  result: "{project-root}/.bmad/knowledge-builder/templates"
+
+# Tags index file
+tags_index_path:
+  result: "{project-root}/.bmad/knowledge-builder/data/tags-index.json"
+
+# Knowledge graph data
+graph_data_path:
+  result: "{project-root}/.bmad/knowledge-builder/data/knowledge-graph.json"
