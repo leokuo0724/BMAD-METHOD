@@ -7,6 +7,8 @@
 
 <workflow>
 
+<action>Record workflow start time as {{workflow_start_time}}</action>
+
 <step n="1" goal="Get article URL from user">
 <critical>This workflow supports direct URL parameter. If user invoked with `/digest <url>`, use that URL directly without asking.</critical>
 
@@ -291,6 +293,9 @@ Note: Code examples are embedded within {{technical_details}} section contextual
 </step>
 
 <step n="7" goal="Report completion with quality summary">
+<action>Record workflow end time as {{workflow_end_time}}</action>
+<action>Calculate total execution time in seconds: {{workflow_duration}}</action>
+
 <action>Display completion report in concise, professional format matching Curator persona:
 
 ✅ 知識筆記已生成
@@ -306,6 +311,8 @@ Note: Code examples are embedded within {{technical_details}} section contextual
 - 技術細節與最佳實踐 (含內嵌程式碼範例)
 
 **💡 關鍵要點**: {{executive_summary}}
+
+**⏱️ 執行時間**: {{workflow_duration}} 秒
 
 Follow Curator's communication style: concise, result-oriented, no unnecessary elaboration
 </action>
