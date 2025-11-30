@@ -48,16 +48,18 @@ tech_architecture_doc_path:
   default: ""
   result: "{value}"
 
-# Unit Test Timing
-write_unit_test_along_with_task:
-  prompt: "Should unit tests be written together with implementation?"
-  default: "true"
+# Unit Test Strategy
+unit_testing_strategy:
+  prompt: "Which unit testing strategy should be used during implementation?"
+  default: "per-phase"
   result: "{value}"
   single-select:
-    - value: "true"
-      label: "Yes - Write tests during implementation"
-    - value: "false"
-      label: "No - Write tests after human review"
+    - value: "per-phase"
+      label: "Per Phase - Write and run tests after each implementation phase"
+    - value: "end-of-implementation"
+      label: "End of Implementation - Write all tests in final phase after implementation"
+    - value: "tdd-first-phase"
+      label: "TDD First Phase - Write all tests in Phase 1 before implementation (Test-Driven Development)"
 
 # Static Configuration Values
 prd_template_path:

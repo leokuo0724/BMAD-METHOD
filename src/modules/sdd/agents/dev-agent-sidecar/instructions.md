@@ -100,18 +100,25 @@ Before committing any phase:
 
 **Test Writing Strategy:**
 
-If `write_unit_test_along_with_task` is TRUE:
+If `unit_testing_strategy` is "per-phase":
 
 - Write tests alongside implementation
 - Test each phase as it's completed
 - Run tests before committing phase
 
-If `write_unit_test_along_with_task` is FALSE:
+If `unit_testing_strategy` is "end-of-implementation":
 
 - Complete all implementation first
 - Wait for human review and approval
-- Then write comprehensive test suite
+- Then write comprehensive test suite in final phase
 - Run tests and adjust implementation if needed
+
+If `unit_testing_strategy` is "tdd-first-phase":
+
+- Write all test specifications in Phase 1 (tests fail initially)
+- Implement features in subsequent phases to make tests pass
+- Follow Red-Green-Refactor TDD cycle
+- Tests guide implementation design
 
 ### Git Workflow Standards
 

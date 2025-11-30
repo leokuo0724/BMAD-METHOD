@@ -528,7 +528,131 @@ The module can be configured in `bmad/sdd/config.yaml` (generated during install
 - **commit_msg_template_path**: Commit message template
 - **pr_template_path**: Pull request template
 - **tech_architecture_doc_path**: Architecture documentation (optional)
-- **write_unit_test_along_with_task**: Test generation timing (true/false)
+- **unit_testing_strategy**: Unit test strategy (per-phase/end-of-implementation/tdd-first-phase)
+
+### Unit Test Strategy
+
+SDD supports three different testing approaches to match your development workflow:
+
+#### 1. Per-Phase Testing (Default)
+
+**Strategy:** `per-phase`
+
+Write and run tests after implementing each phase. This is incremental testing that validates each phase before moving to the next.
+
+**When to use:**
+
+- You want continuous validation during development
+- You prefer catching issues early
+- You like seeing green tests after each phase
+- Your phases are well-isolated and independently testable
+
+**How it works:**
+
+- Phase 1: Implement feature A → Write tests for A → Run tests
+- Phase 2: Implement feature B → Write tests for B → Run tests
+- Phase 3: Implement feature C → Write tests for C → Run tests
+
+**Tech spec structure:**
+
+```markdown
+Phase 1: Implement core authentication logic
+
+- Files: auth.service.ts
+- Tests: auth.service.test.ts (written after implementation)
+
+Phase 2: Add JWT token generation
+
+- Files: token.service.ts
+- Tests: token.service.test.ts (written after implementation)
+```
+
+#### 2. End-of-Implementation Testing
+
+**Strategy:** `end-of-implementation`
+
+Focus on implementation first, write all tests in a final comprehensive testing phase.
+
+**When to use:**
+
+- You want to see the full implementation before writing tests
+- You prefer batch testing after understanding the complete solution
+- Your implementation phases are tightly coupled
+- You want faster initial implementation without test overhead
+
+**How it works:**
+
+- Phase 1: Implement feature A
+- Phase 2: Implement feature B
+- Phase 3: Implement feature C
+- Phase 4: Write comprehensive tests for A, B, and C
+
+**Tech spec structure:**
+
+```markdown
+Phase 1: Implement core authentication logic
+
+- Files: auth.service.ts
+
+Phase 2: Add JWT token generation
+
+- Files: token.service.ts
+
+Phase 3: Integrate with user database
+
+- Files: user.repository.ts
+
+Phase 4: Write comprehensive unit tests
+
+- Files: auth.service.test.ts, token.service.test.ts, user.repository.test.ts
+- Tests: Complete test coverage for all authentication features
+```
+
+#### 3. TDD First-Phase (Test-Driven Development)
+
+**Strategy:** `tdd-first-phase`
+
+Write all test specifications upfront in Phase 1, then implement to make tests pass. This is true Test-Driven Development.
+
+**When to use:**
+
+- You practice Test-Driven Development (TDD)
+- Requirements are well-defined and stable
+- You want tests to drive your implementation design
+- You prefer the Red-Green-Refactor cycle
+- You want maximum test coverage from the start
+
+**How it works:**
+
+- Phase 1: Write all test specifications (tests fail - RED phase)
+- Phase 2: Implement feature A to pass tests (tests pass - GREEN phase)
+- Phase 3: Implement feature B to pass tests (tests pass - GREEN phase)
+- Phase 4: Refactor and optimize (tests still pass)
+
+**Tech spec structure:**
+
+```markdown
+Phase 1: Write test specifications (TDD)
+
+- Files: auth.service.test.ts, token.service.test.ts, user.repository.test.ts
+- Tests: Define all test cases for authentication flow (failing tests expected)
+- Coverage: Specify expected behavior for all features
+
+Phase 2: Implement core authentication logic to pass tests
+
+- Files: auth.service.ts
+- Tests: auth.service.test.ts should pass
+
+Phase 3: Implement JWT token generation to pass tests
+
+- Files: token.service.ts
+- Tests: token.service.test.ts should pass
+
+Phase 4: Implement user database integration to pass tests
+
+- Files: user.repository.ts
+- Tests: user.repository.test.ts should pass
+```
 
 ### Jira Setup
 
@@ -788,7 +912,7 @@ To extend this module:
 
 **Tests not generated:**
 
-- Check `write_unit_test_along_with_task` setting
+- Check `unit_testing_strategy` setting
 - Verify test framework detection
 - Ensure project has test infrastructure
 

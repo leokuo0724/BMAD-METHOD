@@ -22,7 +22,7 @@ tech_spec_template_path: "{config_source}:tech_spec_template_path"
 tech_architecture_doc_path: "{config_source}:tech_architecture_doc_path"
 commit_msg_template_path: "{config_source}:commit_msg_template_path"
 pr_template_path: "{config_source}:pr_template_path"
-write_unit_test_along_with_task: "{config_source}:write_unit_test_along_with_task"
+unit_testing_strategy: "{config_source}:unit_testing_strategy"
 
 # UI/Design integration (optional)
 # If Figma MCP is available, design specs will be automatically fetched from Figma links in Jira tickets

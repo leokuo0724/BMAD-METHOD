@@ -119,16 +119,94 @@ This shows which phase is currently being worked on.</action>
 - Phase {{phase_number}}: {{phase_description}}
 - Files: {{files_modified_in_phase}}</action>
 
-<check if="write_unit_test_along_with_task == true">
-  <action>Write unit tests for this phase</action>
-  <action>Run tests to ensure they pass</action>
+<action>Handle unit tests based on test strategy {unit_testing_strategy}:
+
+**Strategy: "tdd-first-phase" (Test-Driven Development)**
+
+<check if="unit_testing_strategy == tdd-first-phase AND current_phase_number == 1">
+  <action>Write all test specifications for the entire task:
+  - Create test files for all functionality planned in subsequent phases
+  - Define test cases that specify expected behavior
+  - Write test assertions (tests will fail initially - this is expected in TDD red phase)
+  - Document test coverage plan</action>
+
+<action>Run tests to confirm they fail (red phase):
+
+- Expected result: Tests should fail because implementation doesn't exist yet
+- If tests pass unexpectedly, review test logic
+- Inform user: "✅ Test specifications written ({{test_count}} failing tests - ready for TDD)"</action>
+
+<action>Add to {{implementation_summary}}: "Phase 1: TDD tests written ({{test_count}} tests in red phase)"</action>
+</check>
+
+<check if="unit_testing_strategy == tdd-first-phase AND current_phase_number > 1">
+  <action>Run existing tests to verify implementation (green phase):
+  - Run the tests that should pass based on this phase's implementation
+  - Expected result: Previously failing tests now pass</action>
+
+  <check if="tests still fail">
+    <action>Analyze failures and fix implementation to make tests pass</action>
+    <action>This is the TDD cycle: refactor until tests pass</action>
+    <action>Repeat until relevant tests pass</action>
+  </check>
+
+<action>Inform user: "✅ Phase {{phase_number}} complete - {{passing_test_count}} tests now passing"</action>
+<action>Add to {{implementation_summary}}: "Phase {{phase_number}}: Implementation complete ({{passing_test_count}} tests passing)"</action>
+</check>
+
+**Strategy: "per-phase" (Incremental Testing)**
+
+<check if="unit_testing_strategy == per-phase">
+  <action>Write unit tests for this specific phase:
+  - Create/update test files for functionality implemented in this phase
+  - Write test cases covering phase-specific logic
+  - Ensure tests are isolated and focused on this phase</action>
+
+<action>Run tests to ensure they pass:
+
+- Execute newly written tests
+- Verify all tests pass before proceeding</action>
 
   <check if="tests fail">
     <action>Analyze failures and fix implementation or tests</action>
     <action>Repeat until tests pass</action>
   </check>
-  <action>Add test info to {{implementation_summary}}</action>
+
+<action>Inform user: "✅ Phase {{phase_number}} complete with {{test_count}} passing tests"</action>
+<action>Add to {{implementation_summary}}: "Phase {{phase_number}}: Implementation and tests complete ({{test_count}} tests)"</action>
 </check>
+
+**Strategy: "end-of-implementation" (Final Testing)**
+
+<check if="unit_testing_strategy == end-of-implementation AND current_phase_number < total_phase_count">
+  <action>No tests written in this phase (pure implementation)</action>
+  <action>Inform user: "✅ Phase {{phase_number}} complete (tests will be written in final phase)"</action>
+  <action>Add to {{implementation_summary}}: "Phase {{phase_number}}: Implementation complete (no tests yet)"</action>
+</check>
+
+<check if="unit_testing_strategy == end-of-implementation AND current_phase_number == total_phase_count">
+  <action>Write comprehensive unit tests for all implementation:
+  - Create test files covering all functionality from previous phases
+  - Write complete test suite with thorough coverage
+  - Organize tests logically by feature/module
+  - Ensure edge cases and error scenarios are tested</action>
+
+<action>Run full test suite:
+
+- Execute all tests
+- Verify complete implementation works as expected</action>
+
+  <check if="tests fail">
+    <action>Analyze failures and fix implementation or tests</action>
+    <action>May need to revisit code from earlier phases</action>
+    <action>Repeat until all tests pass</action>
+  </check>
+
+<action>Inform user: "✅ Final phase complete - comprehensive test suite with {{test_count}} passing tests"</action>
+<action>Add to {{implementation_summary}}: "Phase {{phase_number}}: Complete test suite written ({{test_count}} tests passing)"</action>
+</check>
+
+</action>
 
 <check if="commit_behavior == auto">
   <action>Load commit message template:
@@ -299,7 +377,7 @@ Select [1/2/3]:</ask>
 </check>
 </step>
 
-<step n="5" goal="Generate unit tests" if="write_unit_test_along_with_task == false">
+<step n="5" goal="Generate unit tests" if="unit_testing_strategy == end-of-implementation">
 <action>Generate comprehensive unit test suite covering:
 - Happy path scenarios
 - Edge cases
@@ -524,7 +602,7 @@ Append the following structured entry:
 
 - Phases completed: [List phase titles from {{implementation_summary}}]
 - Implementation strategy: {{workflow_strategy}}
-- Test strategy: {{write_unit_test_along_with_task}}
+- Test strategy: {{unit_testing_strategy}}
 
 **Challenges & Solutions:**
 [If any significant challenges were encountered during implementation, note them here with solutions applied]

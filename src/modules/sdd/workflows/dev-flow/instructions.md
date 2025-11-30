@@ -82,7 +82,12 @@ Task details loaded. Proceeding to analyze codebase context..."</action>
   - Accessibility considerations from design
   - Link to original Figma file: {{ui_spec_link}}
 - **Scope of Impact**: All files and modules that will be affected
-- **Task Breakdown**: Break into 3-6 logical implementation phases (include UI implementation phase if Figma spec exists)
+- **Task Breakdown**: Break into 3-6 logical implementation phases based on {unit_testing_strategy} strategy:
+  - If strategy is "tdd-first-phase": Phase 1 must be "Write test specifications (TDD)" with all test files, remaining phases are implementation
+  - If strategy is "per-phase": Each implementation phase includes tests written after implementation
+  - If strategy is "end-of-implementation": Implementation phases come first, final phase is "Write comprehensive unit tests"
+  - Include UI implementation phase if Figma spec exists
+- **Test Strategy**: Document the selected testing approach ({unit_testing_strategy})
 - **Technical Dependencies**: Libraries, services, APIs, other tasks (include design system dependencies if applicable)
 - **Implementation Notes**: Patterns to follow, conventions, gotchas (include design-to-code translation notes if Figma spec exists)
 - **Effort Estimation**: Complexity (Low/Medium/High), Confidence level
@@ -323,7 +328,7 @@ Append the following structured entry:
 
 - Phases completed: [List phase titles]
 - Commit strategy: {{commit_strategy}}
-- Test strategy: {{write_unit_test_along_with_task}}
+- Test strategy: {{unit_testing_strategy}}
 
 **Challenges & Solutions:**
 [If any significant challenges were encountered during implementation, note them here with solutions applied]

@@ -136,22 +136,50 @@ Provide a short, descriptive name in kebab-case (e.g., "fe-global-search-bar", "
 </step>
 
 <step n="6" goal="Break down into implementation phases">
-<action>Break the implementation into 3-6 logical phases</action>
+<action>Break the implementation into 3-6 logical phases based on the test strategy: {unit_testing_strategy}</action>
+
+<action>Apply test strategy to phase breakdown:
+
+**If strategy is "tdd-first-phase" (Test-Driven Development):**
+
+- Phase 1 MUST be: "Write test specifications (TDD)"
+  - List all test files to be created
+  - Define test cases that specify expected behavior
+  - Note: Tests will initially fail (red phase of TDD)
+- Subsequent phases (2-N): Implementation phases that make tests pass
+  - Each phase should make specific tests pass (green phase of TDD)
+  - Refactor as needed in each phase
+
+**If strategy is "per-phase" (Incremental Testing):**
+
+- Each implementation phase includes testing notes
+- After implementing phase logic, tests are written and run
+- Format: "Phase N: Implement X (tests written after implementation)"
+- Tests validate the phase before moving to next
+
+**If strategy is "end-of-implementation" (Final Testing):**
+
+- Phases 1 through N-1: Pure implementation (no test mentions)
+- Final phase N: "Write comprehensive unit tests"
+  - List all test files to be created
+  - Cover all previously implemented functionality
+  - Ensure complete test coverage</action>
 
 <action>For each phase, define:
 
-- Phase name (descriptive, action-oriented)
+- Phase name (descriptive, action-oriented, test-strategy-aware)
 - What will be implemented in this phase
-- Which files will be affected
+- Which files will be affected (including test files based on strategy)
 - Key technical considerations
-- Why this phase comes in this order (dependencies)</action>
+- Why this phase comes in this order (dependencies)
+- Test expectations (based on strategy)</action>
 
 <action>Ensure phases are:
 
 - Logical and sequential (considering dependencies)
 - Reasonably sized (each phase should be completable in 1-4 hours)
 - Independently committable (each phase produces a working state)
-- Testable (can write/run tests after each phase)</action>
+- Test-strategy-compliant (follows selected testing approach)</action>
 
 <action>Consider Frontend/Backend separation where applicable</action>
 
