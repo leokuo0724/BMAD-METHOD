@@ -99,10 +99,18 @@ Parse the "Task Breakdown" section and create a status tracking table:
 
 - Extract each phase number and description
 - Create table row for each phase with initial status "⏸️ Pending"
-- Format: | Phase# | Phase Description | ⏸️ Pending | - |
+- Set initial Commit column to "⏳ TBD" (will be updated when workflow strategy is selected)
+- Format: | Phase# | Phase Description | ⏸️ Pending | ⏳ TBD | - |
 - Replace {{phase_status_table}} placeholder in template with actual table rows
 
 This enables real-time phase tracking during implementation.</action>
+
+<action>Set initial workflow configuration values in tech spec:
+
+- **Test Strategy**: Set to {unit_testing_strategy} value from config
+- **Commit Strategy**: Set to "Not selected yet (will be set during implementation)"
+
+These will be displayed in the "Workflow Configuration" section of the tech spec.</action>
 
 <action>Save to: {tech_spec_output_file}</action>
 <action>Store tech spec path as {{tech_spec_path}}</action>
@@ -246,9 +254,31 @@ Select [1/2/3/4]:</ask>
 <action if="user selected 3">Set {{workflow_strategy}} = "semi-auto-with-commit"</action>
 <action if="user selected 4">Set {{workflow_strategy}} = "manual"</action>
 
+<action>Update tech spec with selected workflow strategy:
+
+Find the "Workflow Configuration" section in {{tech_spec_path}} and update:
+
+**Commit Strategy:** {{workflow_strategy}}
+
+This ensures the commit behavior is documented in the tech spec.</action>
+
+<action>Update Phase Status Tracking table with commit expectations:
+
+Parse {{workflow_strategy}} to determine commit behavior for each phase:
+
+- If strategy is "full-auto-with-pr", "full-auto-without-pr", or "semi-auto-with-commit":
+  - Update Commit column for ALL phases to "✅ Auto" (auto-commit after each phase)
+
+- If strategy is "manual":
+  - Update Commit column for ALL phases to "👤 Manual" (user commits manually)
+
+Update each row in the Phase Status Tracking table accordingly.
+
+This provides clear visibility of which phases will auto-commit.</action>
+
 <action>Inform user: "✅ Implementation strategy set to {{workflow_strategy}}.
 
-Starting implementation workflow..."</action>
+Tech spec updated with commit strategy. Starting implementation workflow..."</action>
 
 <action>Invoke implement-task workflow with parameters:
 

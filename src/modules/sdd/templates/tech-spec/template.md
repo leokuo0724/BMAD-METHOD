@@ -11,6 +11,11 @@
 **UI Spec:** {{ui_spec_link}}
 {{/if}}
 
+## Workflow Configuration
+
+**Test Strategy:** {{test_strategy}}
+**Commit Strategy:** {{commit_strategy}}
+
 ---
 
 ## Technical Solution
@@ -43,8 +48,8 @@
 
 ### Phase Status Tracking
 
-| Phase | Description | Status | Completed |
-| ----- | ----------- | ------ | --------- |
+| Phase | Description | Status | Commit | Completed |
+| ----- | ----------- | ------ | ------ | --------- |
 
 {{phase_status_table}}
 

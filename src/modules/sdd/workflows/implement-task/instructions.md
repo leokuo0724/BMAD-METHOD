@@ -68,6 +68,28 @@ Select [1/2/3/4]:</ask>
 <action if="user selected 4">Set {{workflow_strategy}} = "manual"</action>
 </check>
 
+<action>Update tech spec with selected workflow strategy:
+
+Find the "Workflow Configuration" section in {{tech_spec_path}} and update:
+
+**Commit Strategy:** {{workflow_strategy}}
+
+This ensures the commit behavior is documented in the tech spec.</action>
+
+<action>Update Phase Status Tracking table with commit expectations:
+
+Parse {{workflow_strategy}} to determine commit behavior for each phase:
+
+- If strategy is "full-auto-with-pr", "full-auto-without-pr", or "semi-auto-with-commit":
+  - Update Commit column for ALL phases to "✅ Auto" (auto-commit after each phase)
+
+- If strategy is "manual":
+  - Update Commit column for ALL phases to "👤 Manual" (user commits manually)
+
+Update each row in the Phase Status Tracking table accordingly.
+
+This provides clear visibility of which phases will auto-commit.</action>
+
 <action>Parse workflow strategy to determine behaviors:
 
 - If {{workflow_strategy}} == "full-auto-with-pr" or "full-auto-without-pr":
@@ -224,7 +246,8 @@ Check if custom template exists at {commit_msg_template_path}:
 - Always include: Jira: {{jira_task_number}}</action>
 
   <action>Create git commit for this phase</action>
-  <action>Inform user: "✅ Phase {{phase_number}} committed."</action>
+  <action>Store the commit hash as {{phase_commit_hash}}</action>
+  <action>Inform user: "✅ Phase {{phase_number}} committed ({{phase_commit_hash}})"</action>
   </check>
 
 <action>Update tech spec with phase completion status:
@@ -232,13 +255,19 @@ Check if custom template exists at {commit_msg_template_path}:
 Find the "Phase Status Tracking" table in the tech spec document and update the row for Phase {{phase_number}}:
 
 - Change Status from "⏸️ Pending" or "🔄 In Progress" to "✅ Complete"
+- Update Commit column:
+  - If commit was made: Set to "✅ {{phase_commit_hash}}" (first 7 chars of commit hash)
+  - If manual commit (not made yet): Keep as "👤 Manual"
 - Add completion timestamp in "Completed" column (format: YYYY-MM-DD HH:MM)
 - Use Edit tool to update the specific table row
 
-Example update:
-| {{phase_number}} | {{phase_description}} | ✅ Complete | {{current_timestamp}} |
+Example update for auto-commit:
+| {{phase_number}} | {{phase_description}} | ✅ Complete | ✅ abc1234 | {{current_timestamp}} |
 
-This provides real-time visibility into implementation progress directly in the tech spec document.</action>
+Example update for manual commit:
+| {{phase_number}} | {{phase_description}} | ✅ Complete | 👤 Manual | {{current_timestamp}} |
+
+This provides real-time visibility into implementation progress and commit tracking directly in the tech spec document.</action>
 
 <check if="continue_behavior == ask AND commit_behavior == auto">
   <ask>Phase {{phase_number}} completed and committed.

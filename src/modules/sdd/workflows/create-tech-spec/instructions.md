@@ -289,10 +289,18 @@ Parse the "Implementation Phases" section and create a status tracking table:
 
 - Extract each phase number and description
 - Create table row for each phase with initial status "⏸️ Pending"
-- Format: | Phase# | Phase Description | ⏸️ Pending | - |
+- Set initial Commit column to "⏳ TBD" (will be updated when workflow strategy is selected)
+- Format: | Phase# | Phase Description | ⏸️ Pending | ⏳ TBD | - |
 - Replace {{phase_status_table}} placeholder in template with actual table rows
 
 This enables real-time phase tracking during implementation.</action>
+
+<action>Set initial workflow configuration values in tech spec:
+
+- **Test Strategy**: Set to {unit_testing_strategy} value from config
+- **Commit Strategy**: Set to "Not selected yet (will be set during implementation)"
+
+These will be displayed in the "Workflow Configuration" section of the tech spec.</action>
 
 <action>Ensure all variables in the template are replaced with actual content</action>
 <action>Format the document with proper markdown structure</action>
